@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         E6NG Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Remake of the now defunct eSix Extend
 // @author       Earlopain
+// @homepage     https://gitlab.com/Earlopain/e6ng-helper/
 // @match        https://e621.net/*
 // @match        https://e926.net/*
 // @exclude      *.json
@@ -77,7 +78,7 @@ function insertDtextFormatting() {
         { text: "Section", element: "span", insert: "[section=Title]$selection[/section]" },
         { text: "Tag", element: "span", insert: "{{$selection}}" },
         { text: "Wiki", element: "span", insert: "[[$selection]]" },
-        { text: "Link", element: "span", insert: "\"\Link\":$selection" }
+        { text: "Link", element: "span", insert: "\"$selection\":" }
     ];
     //Steal the styles from a button. If you append buttons before the textare they
     //somehow behave as if you clicked on send.
