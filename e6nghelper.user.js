@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         E6NG Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  Remake of the now defunct eSix Extend
 // @author       Earlopain
 // @match        https://e621.net/*
@@ -66,11 +66,18 @@ function showUploader() {
 function insertDtextFormatting() {
     const dtext = document.querySelectorAll(".dtext-previewable");
     const buttons = [
-        { element: "strong", text: "Bold", insert: "[b]$selection[/b]" }, { element: "em", text: "Italics", insert: "[i]$selection[/i]" },
-        { element: "u", text: "Under", insert: "[u]$selection[/u]" }, { element: "s", text: "Strike", insert: "[s]$selection[/s]" },
-        { element: "span", text: "Spoiler", insert: "[spoiler]$selection[/spoiler]" },
-        { element: "span", text: "Link", insert: "\"\Link\":$selection" }, { element: "span", text: "Quote", insert: "[quote]$selection[/quote]" },
-        { element: "span", text: "Section", insert: "[section=Title]$selection[/section]" }
+        { text: "Bold", element: "strong", insert: "[b]$selection[/b]" },
+        { text: "Italics", element: "em", insert: "[i]$selection[/i]" },
+        { text: "Strike", element: "s", insert: "[s]$selection[/s]" },
+        { text: "Under", element: "u", insert: "[u]$selection[/u]" },
+        { text: "Spoiler", element: "span", insert: "[spoiler]$selection[/spoiler]" },
+        { text: "Color", element: "span", insert: "[color=]$selection[/color]" },
+        { text: "Heading", element: "span", insert: "h2.$selection" },
+        { text: "Quote", element: "span", insert: "[quote]$selection[/quote]" },
+        { text: "Section", element: "span", insert: "[section=Title]$selection[/section]" },
+        { text: "Tag", element: "span", insert: "{{$selection}}" },
+        { text: "Wiki", element: "span", insert: "[[$selection]]" },
+        { text: "Link", element: "span", insert: "\"\Link\":$selection" }
     ];
     //Steal the styles from a button. If you append buttons before the textare they
     //somehow behave as if you clicked on send.
@@ -79,7 +86,7 @@ function insertDtextFormatting() {
     document.body.appendChild(templateButton);
     const buttonStyleTemplate = getComputedStyle(templateButton);
     templateButton.remove();
-    const buttonsPerRow = 4;
+    const buttonsPerRow = 6;
     for (const preview of dtext) {
         const textarea = preview.querySelector("textarea");
         for (let i = 0; i < buttons.length; i++) {
@@ -261,7 +268,7 @@ function insertCss() {
     const css = document.createElement("style");
     css.innerHTML = `
 .dtext-format-button {
-    width: 50px !important;
+    width: 60px !important;
     height: 100% !important;
     margin-right: 5px !important;
     margin-bottom: 5px !important;
