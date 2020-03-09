@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         E6NG Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Remake of the now defunct eSix Extend
 // @author       Earlopain
 // @homepage     https://gitlab.com/Earlopain/e6ng-helper/
@@ -43,11 +43,11 @@ function moveBottomNotice() {
     let sidebar = document.querySelector("#sidebar");
     sidebar.insertBefore(a, sidebar.children[2]);
     let clickThis = document.querySelector("#has-parent-relationship-preview-link");
-    if (clickThis) {
+    if (clickThis && document.querySelector("#has-parent-relationship-preview").style.display === "none") {
         clickThis.click();
     }
     let clickThisToo = document.querySelector("#has-children-relationship-preview-link");
-    if (clickThisToo) {
+    if (clickThisToo && document.querySelector("#has-children-relationship-preview").style.display === "none") {
         clickThisToo.click();
     }
 }
