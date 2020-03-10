@@ -13,7 +13,9 @@
 (function () {
     'use strict';
     if (locationCheck("/posts/")) {
-        setTitle();
+        if (isLoggedIn()) {
+            setTitle();
+        }
         moveBottomNotice();
         showUploader();
     }
@@ -310,9 +312,10 @@ function addExtraShortcuts() {
 }
 
 function handlePostShortcuts(e) {
-    if (e.keyCode === 114) { //upvote
+    const loggedIn = isLoggedIn();
+    if (e.keyCode === 114 && loggedIn) { //upvote
         document.querySelector(".post-vote-up-link").click();
-    } else if (e.keyCode === 116 && e.shiftKey === false) { //downvote
+    } else if (e.keyCode === 116 && loggedIn) { //downvote
         document.querySelector(".post-vote-down-link").click();
     }
 }
@@ -320,6 +323,14 @@ function handlePostShortcuts(e) {
 function locationCheck(location) {
     const domain = document.location.protocol + "//" + document.location.host;
     return document.location.href.startsWith(domain + location);
+}
+
+function getUsername() {
+    return document.body.getAttribute("data-user-name");
+}
+
+function isLoggedIn() {
+    return getUsername() !== "Anonymous";
 }
 
 //Credit for storage functions to https://e621.net/forum_topics/22517
