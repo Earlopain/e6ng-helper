@@ -288,6 +288,10 @@ function insertCss() {
     margin-top: 5px;
     height: 8px;
 }
+div#c-posts div.bottom-notices {
+    display: block;
+}
+
 `;
     document.head.appendChild(css);
 }
