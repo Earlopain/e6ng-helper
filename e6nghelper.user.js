@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         E6NG Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      1.0
 // @description  Remake of the now defunct eSix Extend
 // @author       Earlopain
 // @homepage     https://gitlab.com/Earlopain/e6ng-helper/
