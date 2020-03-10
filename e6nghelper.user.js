@@ -277,12 +277,13 @@ function modifyBlacklist() {
     const divContainer = document.createElement("div");
     divContainer.style.paddingBottom = "5px";
     const a = document.createElement("a");
-    a.innerHTML = "Click to hide";
+    a.innerHTML = "Click to " + getText();
     a.href = "#";
 
     a.addEventListener("click", () => {
         storageSet("hideblacklist", !storageGet("hideblacklist", false));
         blaclistList.classList.toggle("invisible");
+        a.innerHTML = "Click to " + getText();
     });
 
     if (storageGet("hideblacklist", false)) {
@@ -290,6 +291,10 @@ function modifyBlacklist() {
     }
     divContainer.appendChild(a);
     blacklistWrapper.insertBefore(divContainer, blacklistWrapper.children[1]);
+
+    function getText() {
+        return storageGet("hideblacklist", false) ? "show" : "hide";
+    }
 }
 
 function locationCheck(location) {
