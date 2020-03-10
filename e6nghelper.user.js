@@ -21,6 +21,7 @@
         enhancePostUploader();
     }
     modifyBlacklist();
+    addExtraShortcuts();
     insertDtextFormatting();
     insertCss();
 })();
@@ -294,6 +295,25 @@ function modifyBlacklist() {
 
     function getText() {
         return storageGet("hideblacklist", false) ? "show" : "hide";
+    }
+}
+
+function addExtraShortcuts() {
+    document.body.addEventListener("keypress", e => {
+        if (e.target.type === "textarea" || e.target.type === "input") {
+            return;
+        }
+        if (locationCheck("/posts/")) {
+            handlePostShortcuts(e);
+        }
+    });
+}
+
+function handlePostShortcuts(e) {
+    if (e.keyCode === 114) { //upvote
+        document.querySelector(".post-vote-up-link").click();
+    } else if (e.keyCode === 116 && e.shiftKey === false) { //downvote
+        document.querySelector(".post-vote-down-link").click();
     }
 }
 
