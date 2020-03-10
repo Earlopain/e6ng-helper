@@ -22,6 +22,7 @@
     if (locationCheck("/uploads/new")) {
         enhancePostUploader();
     }
+    modifyBlacklist();
     insertDtextFormatting();
     insertCss();
 })();
@@ -267,6 +268,25 @@ async function getTagInfo(tag, infoElement) {
     result.count = tagJson.post_count;
     result.true_name = trueTagName;
     return result;
+}
+
+function modifyBlacklist() {
+    const blacklistWrapper = document.getElementById("blacklist-box");
+    const blaclistList = document.getElementById("blacklist-list");
+    if (blacklistWrapper === null) {
+        return;
+    }
+    const a = document.createElement("a");
+    a.innerHTML = "Blacklisted&nbsp";
+    a.href = "#";
+
+    a.addEventListener("click", () => {
+        blaclistList.classList.toggle("invisible");
+    });
+
+    const previousText = blacklistWrapper.children[0].childNodes[0];
+    blacklistWrapper.children[0].insertBefore(a, previousText);
+    previousText.remove();
 }
 
 function locationCheck(location) {
