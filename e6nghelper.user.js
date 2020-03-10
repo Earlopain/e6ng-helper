@@ -292,6 +292,10 @@ div#c-posts div.bottom-notices {
     display: block;
 }
 
+#has-children-relationship-preview {
+    display: grid;
+}
+
 `;
     document.head.appendChild(css);
 }
