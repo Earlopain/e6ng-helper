@@ -72,8 +72,10 @@ function insertDtextFormatting() {
         { text: "Italics", element: "em", insert: "[i]$selection[/i]" },
         { text: "Strike", element: "s", insert: "[s]$selection[/s]" },
         { text: "Under", element: "u", insert: "[u]$selection[/u]" },
+        { text: "Super", element: "sup", insert: "[sup]$selection[/sup]" },
         { text: "Spoiler", element: "span", insert: "[spoiler]$selection[/spoiler]" },
         { text: "Color", element: "span", insert: "[color=]$selection[/color]" },
+        { text: "Code", element: "span", insert: "[code]$selection[/code]" },
         { text: "Heading", element: "span", insert: "h2.$selection" },
         { text: "Quote", element: "span", insert: "[quote]$selection[/quote]" },
         { text: "Section", element: "span", insert: "[section=Title]$selection[/section]" },
@@ -88,7 +90,7 @@ function insertDtextFormatting() {
     document.body.appendChild(templateButton);
     const buttonStyleTemplate = getComputedStyle(templateButton);
     templateButton.remove();
-    const buttonsPerRow = 6;
+    const buttonsPerRow = 7;
     for (const preview of dtext) {
         const textarea = preview.querySelector("textarea");
         const buttonDiv = document.createElement("div");
