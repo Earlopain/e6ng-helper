@@ -90,9 +90,14 @@ function insertDtextFormatting() {
     const buttonsPerRow = 6;
     for (const preview of dtext) {
         const textarea = preview.querySelector("textarea");
+        const buttonDiv = document.createElement("div");
+        const previewButton = preview.closest("form").querySelector(".dtext-preview-button");
+        previewButton.addEventListener("click", () => {
+            buttonDiv.classList.toggle("invisible");
+        });
         for (let i = 0; i < buttons.length; i++) {
             if (i % buttonsPerRow === 0 && i !== 0) {
-                preview.insertBefore(document.createElement("br"), textarea);
+                buttonDiv.appendChild(document.createElement("br"));
             }
             const button = buttons[i];
             const buttonElement = document.createElement("div");
@@ -116,8 +121,9 @@ function insertDtextFormatting() {
                     textarea.value += insertStart + insertEnd;
                 }
             });
-            preview.insertBefore(buttonElement, textarea);
+            buttonDiv.appendChild(buttonElement);
         }
+        preview.insertBefore(buttonDiv, textarea);
     }
 }
 
@@ -268,6 +274,10 @@ function locationCheck(location) {
 function insertCss() {
     const css = document.createElement("style");
     css.innerHTML = `
+.invisible {
+    display: none;
+}
+
 .dtext-format-button {
     width: 60px !important;
     height: 100% !important;
