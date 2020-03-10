@@ -77,7 +77,7 @@ function insertDtextFormatting() {
         { text: "Super", element: "sup", insert: "[sup]$selection[/sup]" },
         { text: "Spoiler", element: "span", insert: "[spoiler]$selection[/spoiler]" },
         { text: "Color", element: "span", insert: "[color=]$selection[/color]" },
-        { text: "Code", element: "span", insert: "[code]$selection[/code]" },
+        { text: "Code", element: "span", insert: "`$selection`" },
         { text: "Heading", element: "span", insert: "h2.$selection" },
         { text: "Quote", element: "span", insert: "[quote]$selection[/quote]" },
         { text: "Section", element: "span", insert: "[section=Title]$selection[/section]" },
