@@ -59,7 +59,8 @@ function showUploader() {
     const li = document.createElement("li");
     const a = document.createElement("a");
     a.href = "https://e621.net/users/" + uploaderId;
-    a.innerText = "Uploader: " + uploaderName;
+    a.innerText = uploaderName;
+    li.appendChild(document.createTextNode("Uploader: "));
     li.appendChild(a);
     ul.appendChild(li);
 }
