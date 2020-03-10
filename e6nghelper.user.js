@@ -8,8 +8,6 @@
 // @match        https://e621.net/*
 // @match        https://e926.net/*
 // @exclude      *.json
-// @grant GM_setValue
-// @grant GM_getValue
 // ==/UserScript==
 
 (function () {
@@ -281,8 +279,13 @@ function modifyBlacklist() {
     a.href = "#";
 
     a.addEventListener("click", () => {
+        storageSet("hideblacklist", !storageGet("hideblacklist", false));
         blaclistList.classList.toggle("invisible");
     });
+
+    if (storageGet("hideblacklist", false)) {
+        a.click();
+    }
 
     const previousText = blacklistWrapper.children[0].childNodes[0];
     blacklistWrapper.children[0].insertBefore(a, previousText);
@@ -292,6 +295,29 @@ function modifyBlacklist() {
 function locationCheck(location) {
     const domain = document.location.protocol + "//" + document.location.host;
     return document.location.href.startsWith(domain + location);
+}
+
+//Credit for storage functions to https://e621.net/forum_topics/22517
+function storageGet(name, defaultValue) {
+    const storage = localStorage.getItem(name);
+    if (storage === null) {
+        return defaultValue;
+    }
+    switch (typeof defaultValue) {
+        case "object":
+            return JSON.parse(storage);
+        case "boolean":
+            return storage === "true";
+        case "number":
+            return defaultValue.toString().indexOf(".") === -1 ? parseInt(storage) : parseFloat(storage);
+        default:
+            return storage;
+    }
+}
+
+function storageSet(name, value) {
+    value = typeof value === "object" ? JSON.stringify(value) : value;
+    localStorage.setItem(name, value);
 }
 
 function insertCss() {
