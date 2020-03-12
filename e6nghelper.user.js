@@ -321,23 +321,23 @@ function modifyBlacklist() {
     const divContainer = document.createElement("div");
     divContainer.style.paddingBottom = "5px";
     const a = document.createElement("a");
-    a.innerHTML = "Click to " + getText();
+    a.innerHTML = "Click to " + getText(getConfig("hideblacklist", false));
     a.href = "#";
 
     a.addEventListener("click", () => {
-        storageSet("hideblacklist", !storageGet("hideblacklist", false));
         blaclistList.classList.toggle("invisible");
-        a.innerHTML = "Click to " + getText();
+        const currentStatus = setConfig("hideblacklist", !getConfig("hideblacklist", false));
+        a.innerHTML = "Click to " + getText(currentStatus);
     });
 
-    if (storageGet("hideblacklist", false)) {
+    if (getConfig("hideblacklist", false)) {
         a.click();
     }
     divContainer.appendChild(a);
     blacklistWrapper.insertBefore(divContainer, blacklistWrapper.children[1]);
 
-    function getText() {
-        return storageGet("hideblacklist", false) ? "show" : "hide";
+    function getText(status) {
+        return status ? "show" : "hide";
     }
 }
 
@@ -386,27 +386,33 @@ function getAuthenticityToken() {
     return getMeta("csrf-token");
 }
 
-//Credit for storage functions to https://e621.net/forum_topics/22517
-function storageGet(name, defaultValue) {
-    const storage = localStorage.getItem(name);
-    if (storage === null) {
+function getConfig(name, defaultValue) {
+    const settings = getSettings();
+    if (settings === null || settings[name] === undefined) {
         return defaultValue;
     }
-    switch (typeof defaultValue) {
-        case "object":
-            return JSON.parse(storage);
-        case "boolean":
-            return storage === "true";
-        case "number":
-            return defaultValue.toString().indexOf(".") === -1 ? parseInt(storage) : parseFloat(storage);
-        default:
-            return storage;
+    return settings[name];
+}
+
+function setConfig(name, value) {
+    const settings = getSettings();
+    settings[name] = value;
+    saveSettings(settings);
+    return value;
+}
+
+function getSettings() {
+    const storage = localStorage.getItem("e6nghelper");
+    if (storage === null) {
+        return {};
+    }
+    else {
+        return JSON.parse(storage);
     }
 }
 
-function storageSet(name, value) {
-    value = typeof value === "object" ? JSON.stringify(value) : value;
-    localStorage.setItem(name, value);
+function saveSettings(settings) {
+    localStorage.setItem("e6nghelper", JSON.stringify(settings));
 }
 
 function insertCss() {
