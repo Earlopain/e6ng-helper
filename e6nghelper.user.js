@@ -543,7 +543,7 @@ function createSettingsDiv(shorthand) {
 
 function settingsToggleDiv() {
     const div = document.createElement("div");
-    div.style.backgroundColor = "blue";
+    div.innerText = "Something will be here soon";
     return div;
 }
 
