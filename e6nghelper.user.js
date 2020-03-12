@@ -194,10 +194,10 @@ function insertDtextFormatting() {
 
 function enhancePostUploader() {
     const textarea = document.getElementById("post_tags");
-    const appendTo = document.querySelector(".related-tag-functions");
+    const divContainer = document.createElement("div");
 
     const tagInput = document.createElement("input");
-    tagInput.classList.add("upload-post-button");
+    tagInput.classList.add("small-margin");
     tagInput.spellcheck = false;
     const tagCheckButton = document.createElement("button");
     const tagInsertButton = document.createElement("button");
@@ -223,9 +223,14 @@ function enhancePostUploader() {
     })
 
     tagCheckButton.innerText = "Check";
-    tagCheckButton.classList.add("upload-post-button");
-    let previousTagText;
+    tagCheckButton.classList.add("small-margin");
     tagCheckButton.addEventListener("click", async () => {
+        const tinyAliases = getConfig("tinyalias", {});
+        if (tinyAliases[tagInput.value]) {
+            const prefix = textarea.value.endsWith(" ") || textarea.value.length === 0 ? "" : " ";
+            textarea.value += prefix + tinyAliases[tagInput.value];
+            return;
+        }
         const currentTag = prepareTagInput(tagInput.value);
 
         if (tagAlreadyExists(currentTag)) {
@@ -237,7 +242,6 @@ function enhancePostUploader() {
             return;
         }
 
-        previousTagText = currentTag;
         const tagInfo = await getTagInfo(currentTag, infoText);
         if (tagInfo.invalid) {
             infoText.innerText = "Invalid tagname";
@@ -248,26 +252,24 @@ function enhancePostUploader() {
         if (tagInfo.is_alias) {
             infoText.innerText += " " + currentTag + " is alias of " + tagInfo.true_name;
             tagInput.value = tagInfo.true_name;
-            previousTagText = tagInfo.true_name;
         }
     });
 
     tagInsertButton.innerText = "Insert";
-    tagInsertButton.classList.add("upload-post-button");
+    tagInsertButton.classList.add("small-margin");
 
     tagInsertButton.addEventListener("click", () => {
         tagAlreadyChecked = false;
         const tag = prepareTagInput(tagInput.value);
         tagInput.value = "";
-        const prefix = textarea.value.endsWith(" ") ? "" : " ";
+        const prefix = textarea.value.endsWith(" ") || textarea.value.length === 0 ? "" : " ";
 
         textarea.value += prefix + tag.toLowerCase();
-        sortTagsButton.click();
         infoText.innerText = "";
     });
 
     sortTagsButton.innerText = "Sort";
-    sortTagsButton.classList.add("upload-post-button");
+    sortTagsButton.classList.add("small-margin");
 
     sortTagsButton.addEventListener("click", () => {
         const currentText = prepareInput(textarea.value);
@@ -275,13 +277,45 @@ function enhancePostUploader() {
         tags.sort();
         textarea.value = tags.join(" ");
     });
-    appendTo.appendChild(document.createElement("br"));
-    appendTo.appendChild(tagInput);
-    appendTo.appendChild(tagCheckButton);
-    appendTo.appendChild(tagInsertButton);
-    appendTo.appendChild(sortTagsButton);
-    appendTo.appendChild(document.createElement("br"));
-    appendTo.appendChild(infoText);
+    divContainer.appendChild(document.createElement("br"));
+    divContainer.appendChild(tagInput);
+    divContainer.appendChild(tagCheckButton);
+    divContainer.appendChild(tagInsertButton);
+    divContainer.appendChild(sortTagsButton);
+    divContainer.appendChild(document.createElement("br"));
+
+    const addTinyAliasButton = document.createElement("button");
+    const removeTinyAliasButton = document.createElement("button");
+    addTinyAliasButton.classList.add("small-margin");
+    removeTinyAliasButton.classList.add("small-margin");
+
+    addTinyAliasButton.innerText = "Set TinyAlias";
+    removeTinyAliasButton.innerText = "Remove TinyAlias";
+
+    addTinyAliasButton.addEventListener("click", () => {
+        const aliasName = prompt("Aliasname").toLowerCase();
+        const aliasContent = prompt("AliasContent").toLowerCase();
+        if (aliasName === "") {
+            return;
+        }
+        const currentAliases = getConfig("tinyalias", {});
+        currentAliases[aliasName] = aliasContent;
+        setConfig("tinyalias", currentAliases);
+    });
+
+    removeTinyAliasButton.addEventListener("click", () => {
+        const aliasName = prompt("Aliasname").toLowerCase();
+        const currentAliases = getConfig("tinyalias", {});
+        delete currentAliases[aliasName];
+        setConfig("tinyalias", {});
+    });
+
+    divContainer.appendChild(addTinyAliasButton);
+    divContainer.appendChild(removeTinyAliasButton);
+    divContainer.appendChild(document.createElement("br"));
+    divContainer.appendChild(infoText);
+
+    document.querySelector(".related-tag-functions").appendChild(divContainer);
 
     function tagAlreadyExists(tag) {
         const currentText = prepareInput(textarea.value);
@@ -477,7 +511,7 @@ function insertCss() {
     background-color: rgb(34, 65, 115) !important;
 }
 
-.upload-post-button {
+.small-margin {
     margin-left: 5px;
     margin-top: 5px;
 }
