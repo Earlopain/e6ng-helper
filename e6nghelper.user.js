@@ -78,36 +78,51 @@ function quickAddToBlacklist() {
         a.innerText = "x ";
         a.href = "#";
         a.addEventListener("click", () => {
-            addToBlacklist(tag.innerText);
+            toggleBlacklistTag(tag.innerText);
         });
         li.insertBefore(a, li.children[0]);
     }
 }
 
-let alreadyAddedToBlacklist = [];
-
-function addToBlacklist(tag) {
-    const currentBlacklist = getCurrentBlacklist();
-    if (currentBlacklist.indexOf(tag) !== -1) {
+async function toggleBlacklistTag(tag) {
+    let currentBlacklist = await getCurrentBlacklist();
+    if (currentBlacklist === NETWORK_ERROR) {
         return;
     }
-    alreadyAddedToBlacklist.push(tag);
-    Danbooru.notice("Added " + tag + " to blacklist");
-    saveCurrentBlacklist();
+    if (currentBlacklist.indexOf(tag) === -1) {
+        currentBlacklist.push(tag);
+        Danbooru.notice("Adding " + tag + " to blacklist");
+    } else {
+        currentBlacklist = currentBlacklist.filter(e => e !== tag);
+        Danbooru.notice("Removing " + tag + " from blacklist");
+    }
+    await saveBlacklist(currentBlacklist);
 }
 
-function getCurrentBlacklist() {
-    return JSON.parse(getMeta("blacklisted-tags")).concat(alreadyAddedToBlacklist);
+async function getCurrentBlacklist() {
+    let response;
+    try {
+        response = await getUrl("https://e621.net/users/" + getUserid() + ".json");
+    } catch (error) {
+        handleNetworkError();
+        return NETWORK_ERROR;
+    }
+    const json = JSON.parse(response);
+    return json.blacklisted_tags.split("\n");
 }
 
-function saveCurrentBlacklist() {
-    const blacklistString = getCurrentBlacklist().join("\r\n");
+function saveBlacklist(blacklistArray) {
+    const blacklistString = blacklistArray.join("\n");
     const url = "https://e621.net/users/" + getUserid() + ".json";
     const json = {
         "_method": "patch",
         "user[blacklisted_tags]": blacklistString
     }
-    postUrl(url, json);
+    try {
+        postUrl(url, json);
+    } catch (error) {
+        handleNetworkError();
+    }
 }
 
 function insertDtextFormatting() {
