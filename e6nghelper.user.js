@@ -239,10 +239,7 @@ function enhancePostUploader() {
     tagCheckButton.innerText = "Check";
     tagCheckButton.classList.add("small-margin");
     tagCheckButton.addEventListener("click", async () => {
-        const tinyAliases = getConfig("tinyalias", {});
-        if (tinyAliases[tagInput.value]) {
-            const prefix = textarea.value.endsWith(" ") || textarea.value.length === 0 ? "" : " ";
-            textarea.value += prefix + tinyAliases[tagInput.value];
+        if (insertTinyAlias(tagInput, textarea)) {
             return;
         }
         const currentTag = prepareTagInput(tagInput.value);
@@ -273,6 +270,9 @@ function enhancePostUploader() {
     tagInsertButton.classList.add("small-margin");
 
     tagInsertButton.addEventListener("click", () => {
+        if (insertTinyAlias(tagInput, textarea)) {
+            return;
+        }
         tagAlreadyChecked = false;
         const tag = prepareTagInput(tagInput.value);
         tagInput.value = "";
@@ -314,6 +314,16 @@ function enhancePostUploader() {
         const currentText = prepareInput(textarea.value);
         const tags = currentText.split(" ");
         return tags.indexOf(tag) !== -1;
+    }
+
+    function insertTinyAlias(inputElement, textarea) {
+        const tinyAliases = getConfig("tinyalias", {});
+        if (tinyAliases[inputElement.value]) {
+            const prefix = textarea.value.endsWith(" ") || textarea.value.length === 0 ? "" : " ";
+            textarea.value += prefix + tinyAliases[inputElement.value];
+            inputElement.value = "";
+            return;
+        }
     }
 
 }
