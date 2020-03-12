@@ -560,20 +560,48 @@ function createSettingsDiv() {
 
 function createTinyAliasDiv() {
     const div = document.createElement("div");
-    const allAliases = getConfig("tinyalias");
+    const allAliases = getConfig("tinyalias", {});
+    const allAliasesDiv = document.createElement("div");
+    allAliasesDiv.id = "e6ng-settings-all-aliases";
     for (const aliasName of Object.keys(allAliases)) {
         const aliasDiv = document.createElement("div");
         aliasDiv.classList.add("settings-alias-container");
         const nameContainer = document.createElement("div");
         nameContainer.classList.add("settings-alias-name");
         nameContainer.innerText = aliasName;
+        const deleteAlias = document.createElement("a");
+        deleteAlias.href = "#";
+        deleteAlias.innerText = " (remove)";
+
+        deleteAlias.addEventListener("click", () => {
+            aliasDiv.remove();
+        });
+
+        nameContainer.appendChild(deleteAlias);
         aliasDiv.appendChild(nameContainer);
 
         const input = document.createElement("textarea");
         input.value = allAliases[aliasName];
         aliasDiv.appendChild(input);
-        div.appendChild(aliasDiv)
+        allAliasesDiv.appendChild(aliasDiv)
     }
+    div.appendChild(allAliasesDiv);
+
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Save";
+
+    saveButton.addEventListener("click", () => {
+        const aliases = {};
+        for (const alias of allAliasesDiv.children) {
+            const aliasName = alias.querySelector(".settings-alias-name").childNodes[0].textContent;
+            const aliasContent = alias.querySelector("textarea").value;
+            aliases[aliasName] = aliasContent;
+        }
+        setConfig("tinyalias", aliases);
+        Danbooru.notice("TinyAlias saved");
+    });
+
+    div.appendChild(saveButton);
     return div;
 }
 
@@ -675,12 +703,16 @@ function insertCss() {
     padding-right: 5px;
 }
 
+#e6ng-settings-all-aliases {
+    display: inline-block;
+    width: 100%;
+}
+
 .settings-alias-container {
-    padding-left: 5px;
+    padding-right: 10px;
     padding-bottom: 5px;
     width: 30%;
     height: 100px;
-    margin-left: 5px;
     display: flex;
     flex-direction: column;
     float: left;
