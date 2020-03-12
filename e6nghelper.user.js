@@ -459,10 +459,14 @@ function addSettingsMenu() {
     const header = document.getElementById("nav").querySelector("menu");
     const li = document.createElement("li");
     li.id = "nav-e6ng-helper";
+
     const a = document.createElement("a");
     a.id = "nav-e6ng-helper-link";
     a.innerText = "E6NG";
     a.href = "#";
+    a.addEventListener("click", () => {
+        openSettingsTab("settings");
+    });
 
     const settingsDiv = document.createElement("div");
     settingsDiv.id = "e6ng-settings";
@@ -470,9 +474,14 @@ function addSettingsMenu() {
     const settingsDivDraggable = document.createElement("div");
     settingsDivDraggable.id = "e6ng-settings-dragable";
     settingsDivDraggable.innerText = "E6NG Helper Settings";
+
     const settingsCloseButton = document.createElement("div");
     settingsCloseButton.id = "e6ng-settings-close";
     settingsCloseButton.innerHTML = "\u274C";
+    settingsCloseButton.addEventListener("click", () => {
+        settingsDiv.classList.add("invisible");
+    });
+
     settingsDivDraggable.appendChild(settingsCloseButton);
 
     const settingsDivContent = document.createElement("div");
@@ -508,22 +517,16 @@ function addSettingsMenu() {
     settingsDiv.appendChild(settingsDivDraggable);
     settingsDiv.appendChild(settingsTabbar);
     settingsDiv.appendChild(settingsDivContent);
-    a.addEventListener("click", () => {
-        settingsDiv.classList.toggle("invisible");
-    });
-    settingsCloseButton.addEventListener("click", () => {
-        settingsDiv.classList.toggle("invisible");
-    });
 
     li.appendChild(a);
     header.insertBefore(document.createTextNode(" "), header.children[header.childElementCount - 1]);
     header.insertBefore(li, header.children[header.childElementCount - 1]);
     document.body.appendChild(settingsDiv);
-    openSettingsTab("settings");
     dragElement(settingsDiv);
 }
 
 function openSettingsTab(shorthand) {
+    document.getElementById("e6ng-settings").classList.remove("invisible");
     document.getElementById("e6ng-settings-tab-" + shorthand).click();
 }
 
