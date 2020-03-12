@@ -10,6 +10,8 @@
 // @exclude      *.json
 // ==/UserScript==
 
+const NETWORK_ERROR = -1;
+
 (function () {
     'use strict';
     if (locationCheck("/posts/")) {
@@ -289,7 +291,14 @@ async function getTagInfo(tag, infoElement) {
         true_name: undefined
     }
 
-    let tagJson = JSON.parse(await getUrl("https://e621.net/tags/" + tag + ".json"));
+    let request;
+    try {
+        request = await getUrl("https://e621.net/tags/" + tag + ".json");
+    } catch (error) {
+        handleNetworkError();
+        return;
+    }
+    let tagJson = JSON.parse(request);
     if (tagJson === null) {
         result.invalid = true;
         return result;
@@ -300,13 +309,25 @@ async function getTagInfo(tag, infoElement) {
     if (infoElement) {
         infoElement.innerText = "Checking alias...";
     }
-    const aliasJson = JSON.parse(await getUrl("https://e621.net/tag_aliases.json?search[antecedent_name]=" + tag));
+    try {
+        request = await getUrl("https://e621.net/tag_aliases.json?search[antecedent_name]=" + tag);
+    } catch (error) {
+        handleNetworkError();
+        return;
+    }
+    const aliasJson = JSON.parse(request);
     if (aliasJson[0] === undefined) {
         return result;
     }
     result.is_alias = true;
     const trueTagName = aliasJson[0].consequent_name;
-    tagJson = JSON.parse(await getUrl("https://e621.net/tags/" + encodeURIComponent(trueTagName) + ".json"));
+    try {
+        request = await getUrl("https://e621.net/tags/" + encodeURIComponent(trueTagName) + ".json");
+    } catch (error) {
+        handleNetworkError();
+        return;
+    }
+    tagJson = JSON.parse(request);
     result.count = tagJson.post_count;
     result.true_name = trueTagName;
     return result;
@@ -476,7 +497,6 @@ function getComputedStyle(element) {
 }
 
 async function request(url, method, data = {}) {
-
     return new Promise(async (resolve, reject) => {
         let requestInfo = {
             "credentials": "include",
@@ -494,8 +514,12 @@ async function request(url, method, data = {}) {
             }
             requestInfo.body = postData.join("&");
         }
-        const body = await fetch(url, requestInfo);
-        resolve(await body.text());
+        const request = await fetch(url, requestInfo);
+        if (request.status >= 200 && request.status < 400) {
+            resolve(await request.text());
+        } else {
+            reject();
+        }
     })
 }
 
@@ -505,4 +529,8 @@ async function getUrl(url) {
 
 async function postUrl(url, json) {
     return await request(url, "POST", json);
+}
+
+function handleNetworkError() {
+    Danbooru.error("A network error has occured");
 }
