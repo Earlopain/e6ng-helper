@@ -323,16 +323,22 @@ function modifyBlacklist() {
     const a = document.createElement("a");
     a.innerHTML = "Click to " + getText(getConfig("hideblacklist", false));
     a.href = "#";
-
+    //only modify setting after hiding blacklist initially
+    //becuase a.click also results in changing the setting
+    let allowSetSettings = false;
     a.addEventListener("click", () => {
         blaclistList.classList.toggle("invisible");
-        const currentStatus = setConfig("hideblacklist", !getConfig("hideblacklist", false));
+        let currentStatus = getConfig("hideblacklist", false);
+        if (allowSetSettings) {
+            currentStatus = setConfig("hideblacklist", !currentStatus);
+        }
         a.innerHTML = "Click to " + getText(currentStatus);
     });
 
     if (getConfig("hideblacklist", false)) {
         a.click();
     }
+    allowSetSettings = true;
     divContainer.appendChild(a);
     blacklistWrapper.insertBefore(divContainer, blacklistWrapper.children[1]);
 
