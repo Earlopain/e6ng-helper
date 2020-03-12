@@ -481,6 +481,7 @@ function addSettingsMenu() {
     settingsDiv.classList.add("invisible");
     const settingsDivDraggable = document.createElement("div");
     settingsDivDraggable.id = "e6ng-settings-dragable";
+    settingsDivDraggable.innerText = "E6NG Helper Settings";
     const settingsCloseButton = document.createElement("div");
     settingsCloseButton.id = "e6ng-settings-close";
     settingsCloseButton.innerHTML = "\u274C";
@@ -518,6 +519,10 @@ function addSettingsMenu() {
             for (const element of document.querySelectorAll(".e6ng-tab-content")) {
                 element.classList.add("invisible");
             }
+            for (const element of document.querySelectorAll(".e6ng-settings-tab-selected")) {
+                element.classList.remove("e6ng-settings-tab-selected");
+            }
+            tabSelector.classList.add("e6ng-settings-tab-selected");
             tabDiv.classList.remove("invisible");
         });
         settingsTabbar.appendChild(tabSelector);
@@ -591,7 +596,7 @@ function insertCss() {
     const css = document.createElement("style");
     css.innerHTML = `
 .invisible {
-    display: none;
+    display: none !important;
 }
 
 #e6ng-settings {
@@ -600,41 +605,56 @@ function insertCss() {
     right: 70px;
     width: 50%;
     height: 50%;
-    background-color: red;
+    background-color: #152F56;
     z-index: 5;
+    display: flex;
+    flex-flow: column;
+    outline: 3px solid black;
 }
 
 #e6ng-settings-dragable {
-    background-color: green;
     height: 35px;
     cursor: move;
+    border-radius: 5px 5px 0px 0px;
+    font-size: 20px;
+    line-height: 30px;
+    padding-left: 5px;
 }
 
 #e6ng-settings-close {
-    background-color: yellow;
     height: 100%;
     width: 35px;
     float: right;
-    line-height: 35px;
-    font-size: 35px;
+    line-height: 25px;
+    font-size: 25px;
+    text-align: right;
     cursor: default;
+    margin-top: 5px;
+    margin-right: 5px;
 }
 
 #e6ng-settings-tabbar {
-
+    border-radius: 5px;
 }
 
 .e6ng-settings-tab {
     display: inline-block;
+    border-radius: 5px;
+    color: lightgrey;
+}
+
+.e6ng-settings-tab-selected {
+    font-weight: bold;
+    border-radius: 5px;
+    color: white;
 }
 
 #e6ng-settings-content {
-    width: 100%;
     height: 100%;
+    border-radius: 5px;
 }
 
 .e6ng-tab-content {
-    width: 100%;
     height: 100%;
 }
 
