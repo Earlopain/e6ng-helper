@@ -12,6 +12,17 @@
 
 const NETWORK_ERROR = -1;
 
+const settingsTabs = {
+    "settings": {
+        title: "Enable/Disable Settings",
+        divFunction: settingsToggleDiv
+    },
+    "tinyalias": {
+        title: "TinyAlias",
+        divFunction: createTinyAliasDiv
+    }
+};
+
 (function () {
     'use strict';
     if (locationCheck("/posts/")) {
@@ -280,42 +291,19 @@ function enhancePostUploader() {
         tags.sort();
         textarea.value = tags.join(" ");
     });
+
+    const tinyAliasButton = document.createElement("button");
+    tinyAliasButton.classList.add("small-margin");
+    tinyAliasButton.innerText = "TinyAlias";
+    tinyAliasButton.addEventListener("click", () => openSettingsTab("tinyalias"));
+
     divContainer.appendChild(document.createElement("br"));
     divContainer.appendChild(tagInput);
     divContainer.appendChild(tagCheckButton);
     divContainer.appendChild(tagInsertButton);
     divContainer.appendChild(sortTagsButton);
-    divContainer.appendChild(document.createElement("br"));
+    divContainer.appendChild(tinyAliasButton);
 
-    const addTinyAliasButton = document.createElement("button");
-    const removeTinyAliasButton = document.createElement("button");
-    addTinyAliasButton.classList.add("small-margin");
-    removeTinyAliasButton.classList.add("small-margin");
-
-    addTinyAliasButton.innerText = "Set TinyAlias";
-    removeTinyAliasButton.innerText = "Remove TinyAlias";
-
-    addTinyAliasButton.addEventListener("click", () => {
-        const aliasName = prompt("Aliasname").toLowerCase();
-        const aliasContent = prompt("AliasContent").toLowerCase();
-        if (aliasName === "") {
-            return;
-        }
-        const currentAliases = getConfig("tinyalias", {});
-        currentAliases[aliasName] = aliasContent;
-        setConfig("tinyalias", currentAliases);
-    });
-
-    removeTinyAliasButton.addEventListener("click", () => {
-        const aliasName = prompt("Aliasname").toLowerCase();
-        const currentAliases = getConfig("tinyalias", {});
-        delete currentAliases[aliasName];
-        setConfig("tinyalias", {});
-    });
-
-    divContainer.appendChild(addTinyAliasButton);
-    divContainer.appendChild(removeTinyAliasButton);
-    divContainer.appendChild(document.createElement("br"));
     divContainer.appendChild(infoText);
 
     document.querySelector(".related-tag-functions").appendChild(divContainer);
@@ -494,24 +482,11 @@ function addSettingsMenu() {
     const settingsTabbar = document.createElement("div");
     settingsTabbar.id = "e6ng-settings-tabbar";
 
-    const tabs = [
-        {
-            title: "Enable/Disable Settings",
-            shorthand: "settings",
-            divFunction: createSettingsDiv
-        },
-        {
-            title: "TinyAlias",
-            shorthand: "tinyalias",
-            divFunction: createTinyAliasDiv
-        }
-    ]
-
-    for (const tab of tabs) {
-        const tabDiv = tab.divFunction();
-        tabDiv.classList.add("e6ng-tab-content");
+    for (const shorthand of Object.keys(settingsTabs)) {
+        const tab = settingsTabs[shorthand];
+        const tabDiv = createSettingsDiv(shorthand);
         const tabSelector = document.createElement("div");
-        tabSelector.id = "e6ng-settings-tab-" + tab.shorthand;
+        tabSelector.id = "e6ng-settings-tab-" + shorthand;
         tabSelector.innerText = tab.title;
         tabSelector.classList.add("e6ng-settings-tab");
         tabSelector.classList.add("small-padding");
@@ -524,7 +499,7 @@ function addSettingsMenu() {
                 element.classList.remove("e6ng-settings-tab-selected");
             }
             tabSelector.classList.add("e6ng-settings-tab-selected");
-            tabDiv.classList.remove("invisible");
+            document.getElementById("e6ng-tab-content-" + shorthand).classList.remove("invisible");
         });
         settingsTabbar.appendChild(tabSelector);
         settingsDivContent.appendChild(tabDiv);
@@ -544,15 +519,26 @@ function addSettingsMenu() {
     header.insertBefore(document.createTextNode(" "), header.children[header.childElementCount - 1]);
     header.insertBefore(li, header.children[header.childElementCount - 1]);
     document.body.appendChild(settingsDiv);
-    showSettingsTab("settings");
+    openSettingsTab("settings");
     dragElement(settingsDiv);
 }
 
-function showSettingsTab(shorthand) {
+function openSettingsTab(shorthand) {
     document.getElementById("e6ng-settings-tab-" + shorthand).click();
 }
 
-function createSettingsDiv() {
+function redrawSettingsTab(shorthand) {
+    document.getElementById("e6ng-tab-content-" + shorthand).replaceWith(createSettingsDiv(shorthand));
+}
+
+function createSettingsDiv(shorthand) {
+    const tabDiv = settingsTabs[shorthand].divFunction();
+    tabDiv.classList.add("e6ng-tab-content");
+    tabDiv.id = "e6ng-tab-content-" + shorthand;
+    return tabDiv;
+}
+
+function settingsToggleDiv() {
     const div = document.createElement("div");
     div.style.backgroundColor = "blue";
     return div;
@@ -560,6 +546,42 @@ function createSettingsDiv() {
 
 function createTinyAliasDiv() {
     const div = document.createElement("div");
+
+    const createAliasDiv = document.createElement("div");
+    createAliasDiv.appendChild(document.createTextNode("Alias name: "));
+
+    const aliasNameInput = document.createElement("input");
+    createAliasDiv.appendChild(aliasNameInput);
+    createAliasDiv.appendChild(document.createTextNode(" Alias content: "));
+
+
+    const aliasValueInput = document.createElement("textarea");
+    aliasValueInput.id = "e6ng-settings-alias-valueinput";
+    aliasValueInput.classList.add("small-margin");
+
+    createAliasDiv.appendChild(aliasValueInput);
+
+    const aliasCreateButton = document.createElement("button");
+    aliasCreateButton.innerText = "Create";
+    aliasCreateButton.classList.add("small-margin");
+    aliasCreateButton.classList.add("small-padding");
+    aliasCreateButton.addEventListener("click", () => {
+        const aliasName = aliasNameInput.value.toLowerCase();
+        const aliasContent = aliasValueInput.value.toLowerCase();
+        if (aliasName === "") {
+            return;
+        }
+        const currentAliases = getConfig("tinyalias", {});
+        currentAliases[aliasName] = aliasContent;
+        setConfig("tinyalias", currentAliases);
+        Danbooru.notice("Added TinyAlias");
+        redrawSettingsTab("tinyalias");
+    });
+
+    createAliasDiv.appendChild(aliasCreateButton);
+
+    div.appendChild(createAliasDiv);
+
     const allAliases = getConfig("tinyalias", {});
     const allAliasesDiv = document.createElement("div");
     allAliasesDiv.id = "e6ng-settings-all-aliases";
@@ -701,6 +723,11 @@ function insertCss() {
     height: 100%;
     padding-left: 5px;
     padding-right: 5px;
+}
+
+#e6ng-settings-alias-valueinput {
+    min-width: 250px;
+    display: inline-block;
 }
 
 #e6ng-settings-all-aliases {
