@@ -551,7 +551,9 @@ function settingsToggleDiv() {
 
 function createTinyAliasDiv() {
     const div = document.createElement("div");
-
+    const explainationDiv = document.createElement("div");
+    explainationDiv.innerText = "When you are uploading a post and insert a tag with the name you typed here, the complete text you entered will be inserted into the tag box";
+    div.appendChild(explainationDiv);
     const createAliasDiv = document.createElement("div");
     createAliasDiv.appendChild(document.createTextNode("Alias name: "));
 
