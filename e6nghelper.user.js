@@ -85,6 +85,7 @@ function quickAddToBlacklist() {
 }
 
 async function toggleBlacklistTag(tag) {
+    Danbooru.notice("Getting current blacklist");
     let currentBlacklist = await getCurrentBlacklist();
     if (currentBlacklist === NETWORK_ERROR) {
         return;
@@ -97,6 +98,7 @@ async function toggleBlacklistTag(tag) {
         Danbooru.notice("Removing " + tag + " from blacklist");
     }
     await saveBlacklist(currentBlacklist);
+    Danbooru.notice("Finished blacklist");
 }
 
 async function getCurrentBlacklist() {
@@ -111,7 +113,7 @@ async function getCurrentBlacklist() {
     return json.blacklisted_tags.split("\n");
 }
 
-function saveBlacklist(blacklistArray) {
+async function saveBlacklist(blacklistArray) {
     const blacklistString = blacklistArray.join("\n");
     const url = "https://e621.net/users/" + getUserid() + ".json";
     const json = {
@@ -119,7 +121,7 @@ function saveBlacklist(blacklistArray) {
         "user[blacklisted_tags]": blacklistString
     }
     try {
-        postUrl(url, json);
+        await postUrl(url, json);
     } catch (error) {
         handleNetworkError();
     }
