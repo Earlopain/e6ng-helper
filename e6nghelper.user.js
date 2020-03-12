@@ -4,7 +4,9 @@
 // @version      1.1
 // @description  Remake of the now defunct eSix Extend
 // @author       Earlopain
-// @homepage     https://gitlab.com/Earlopain/e6ng-helper/
+// @homepage     https://e621.net/forum_topics/25872
+// @supportURL   https://e621.net/forum_topics/25872
+// @description  Remake of eSix extend with many features like dtext formating and TinyAlias
 // @match        https://e621.net/*
 // @match        https://e926.net/*
 // @exclude      *.json
