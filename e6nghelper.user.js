@@ -273,7 +273,9 @@ function enhancePostUploader() {
 
     sortTagsButton.addEventListener("click", () => {
         const currentText = prepareInput(textarea.value);
-        const tags = currentText.split(" ");
+        let tags = currentText.split(" ");
+        //remove duplicates
+        tags = [...new Set(tags)];
         tags.sort();
         textarea.value = tags.join(" ");
     });
