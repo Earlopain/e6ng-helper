@@ -485,8 +485,48 @@ function addSettingsMenu() {
     settingsCloseButton.id = "e6ng-settings-close";
     settingsCloseButton.innerHTML = "\u274C";
     settingsDivDraggable.appendChild(settingsCloseButton);
-    settingsDiv.appendChild(settingsDivDraggable);
 
+    const settingsDivContent = document.createElement("div");
+    settingsDivContent.id = "e6ng-settings-content";
+
+    const settingsTabbar = document.createElement("div");
+    settingsTabbar.id = "e6ng-settings-tabbar";
+
+    const tabs = [
+        {
+            title: "Enable/Disable Settings",
+            shorthand: "settings",
+            divFunction: createSettingsDiv
+        },
+        {
+            title: "TinyAlias",
+            shorthand: "tinyalias",
+            divFunction: createTinyAliasDiv
+        }
+    ]
+
+    for (const tab of tabs) {
+        const tabDiv = tab.divFunction();
+        tabDiv.classList.add("e6ng-tab-content");
+        const tabSelector = document.createElement("div");
+        tabSelector.id = "e6ng-settings-tab-" + tab.shorthand;
+        tabSelector.innerText = tab.title;
+        tabSelector.classList.add("e6ng-settings-tab");
+        tabSelector.classList.add("small-padding");
+
+        tabSelector.addEventListener("click", () => {
+            for (const element of document.querySelectorAll(".e6ng-tab-content")) {
+                element.classList.add("invisible");
+            }
+            tabDiv.classList.remove("invisible");
+        });
+        settingsTabbar.appendChild(tabSelector);
+        settingsDivContent.appendChild(tabDiv);
+    }
+
+    settingsDiv.appendChild(settingsDivDraggable);
+    settingsDiv.appendChild(settingsTabbar);
+    settingsDiv.appendChild(settingsDivContent);
     a.addEventListener("click", () => {
         settingsDiv.classList.toggle("invisible");
     });
@@ -498,7 +538,24 @@ function addSettingsMenu() {
     header.insertBefore(document.createTextNode(" "), header.children[header.childElementCount - 1]);
     header.insertBefore(li, header.children[header.childElementCount - 1]);
     document.body.appendChild(settingsDiv);
+    showSettingsTab("settings");
     dragElement(settingsDiv);
+}
+
+function showSettingsTab(shorthand) {
+    document.getElementById("e6ng-settings-tab-" + shorthand).click();
+}
+
+function createSettingsDiv() {
+    const div = document.createElement("div");
+    div.style.backgroundColor = "blue";
+    return div;
+}
+
+function createTinyAliasDiv() {
+    const div = document.createElement("div");
+    div.style.backgroundColor = "orange";
+    return div;
 }
 
 function getConfig(name, defaultValue) {
@@ -563,6 +620,24 @@ function insertCss() {
     cursor: default;
 }
 
+#e6ng-settings-tabbar {
+
+}
+
+.e6ng-settings-tab {
+    display: inline-block;
+}
+
+#e6ng-settings-content {
+    width: 100%;
+    height: 100%;
+}
+
+.e6ng-tab-content {
+    width: 100%;
+    height: 100%;
+}
+
 .dtext-format-button {
     width: 60px !important;
     height: 100% !important;
@@ -577,6 +652,10 @@ function insertCss() {
 .small-margin {
     margin-left: 5px;
     margin-top: 5px;
+}
+
+.small-padding {
+    padding: 5px 5px 5px 5px;
 }
 
 .tag-status-div {
