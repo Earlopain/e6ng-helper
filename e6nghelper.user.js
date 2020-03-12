@@ -15,6 +15,7 @@
     if (locationCheck("/posts/")) {
         if (isLoggedIn()) {
             setTitle();
+            quickAddToBlacklist();
         }
         moveBottomNotice();
         showUploader();
@@ -65,6 +66,46 @@ function showUploader() {
     li.appendChild(document.createTextNode("Uploader: "));
     li.appendChild(a);
     ul.appendChild(li);
+}
+
+function quickAddToBlacklist() {
+    const tags = document.querySelectorAll(".search-tag");
+    for (const tag of tags) {
+        const li = tag.closest("li");
+        const a = document.createElement("a");
+        a.innerText = "x ";
+        a.href = "#";
+        a.addEventListener("click", () => {
+            addToBlacklist(tag.innerText);
+        });
+        li.insertBefore(a, li.children[0]);
+    }
+}
+
+let alreadyAddedToBlacklist = [];
+
+function addToBlacklist(tag) {
+    const currentBlacklist = getCurrentBlacklist();
+    if (currentBlacklist.indexOf(tag) !== -1) {
+        return;
+    }
+    alreadyAddedToBlacklist.push(tag);
+    Danbooru.notice("Added " + tag + " to blacklist");
+    saveCurrentBlacklist();
+}
+
+function getCurrentBlacklist() {
+    return JSON.parse(getMeta("blacklisted-tags")).concat(alreadyAddedToBlacklist);
+}
+
+function saveCurrentBlacklist() {
+    const blacklistString = getCurrentBlacklist().join("\r\n");
+    const url = "https://e621.net/users/" + getUserid() + ".json";
+    const json = {
+        "_method": "patch",
+        "user[blacklisted_tags]": blacklistString
+    }
+    postUrl(url, json);
 }
 
 function insertDtextFormatting() {
@@ -325,12 +366,24 @@ function locationCheck(location) {
     return document.location.href.startsWith(domain + location);
 }
 
-function getUsername() {
-    return document.body.getAttribute("data-user-name");
-}
-
 function isLoggedIn() {
     return getUsername() !== "Anonymous";
+}
+
+function getMeta(name) {
+    return document.head.querySelector("[name~=" + name + "][content]").content;
+}
+
+function getUsername() {
+    return getMeta("current-user-name");
+}
+
+function getUserid() {
+    return getMeta("current-user-id");
+}
+
+function getAuthenticityToken() {
+    return getMeta("csrf-token");
 }
 
 //Credit for storage functions to https://e621.net/forum_topics/22517
@@ -410,16 +463,34 @@ function getComputedStyle(element) {
     }
 }
 
-async function getUrl(url) {
-    return new Promise((resolve, reject) => {
-        let request = new XMLHttpRequest();
-        request.open("GET", url, true);
-        request.addEventListener("load", () => {
-            if (request.status >= 200 && request.status < 400) {
-                resolve(request.responseText);
-            } else { reject(); }
-        });
-        request.addEventListener("error", () => { reject() });
-        request.send();
+async function request(url, method, data = {}) {
+
+    return new Promise(async (resolve, reject) => {
+        let requestInfo = {
+            "credentials": "include",
+            "headers": {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            "method": method,
+            "mode": "cors"
+        };
+        if (method !== "GET" && method !== "get") {
+            let postData = []
+            data["authenticity_token"] = getAuthenticityToken();
+            for (const key of Object.keys(data)) {
+                postData.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
+            }
+            requestInfo.body = postData.join("&");
+        }
+        const body = await fetch(url, requestInfo);
+        resolve(await body.text());
     })
+}
+
+async function getUrl(url) {
+    return await request(url, "GET");
+}
+
+async function postUrl(url, json) {
+    return await request(url, "POST", json);
 }
