@@ -28,6 +28,7 @@ const NETWORK_ERROR = -1;
     modifyBlacklist();
     addExtraShortcuts();
     insertDtextFormatting();
+    addSettingsMenu();
     insertCss();
 })();
 
@@ -466,6 +467,34 @@ function getAuthenticityToken() {
     return getMeta("csrf-token");
 }
 
+function addSettingsMenu() {
+    const header = document.getElementById("nav").querySelector("menu");
+    const li = document.createElement("li");
+    li.id = "nav-e6ng-helper";
+    const a = document.createElement("a");
+    a.id = "nav-e6ng-helper-link";
+    a.innerText = "E6NG";
+    a.href = "#";
+
+    const settingsDiv = document.createElement("div");
+    settingsDiv.id = "e6ng-settings";
+    settingsDiv.classList.add("invisible");
+    const settingsDivDraggable = document.createElement("div");
+    settingsDivDraggable.id = "e6ng-settings-dragable";
+    settingsDiv.appendChild(settingsDivDraggable);
+
+
+    a.addEventListener("click", () => {
+        settingsDiv.classList.toggle("invisible");
+    });
+
+    li.appendChild(a);
+    header.insertBefore(document.createTextNode(" "), header.children[header.childElementCount - 1]);
+    header.insertBefore(li, header.children[header.childElementCount - 1]);
+    document.body.appendChild(settingsDiv);
+    dragElement(settingsDiv);
+}
+
 function getConfig(name, defaultValue) {
     const settings = getSettings();
     if (settings === null || settings[name] === undefined) {
@@ -500,6 +529,21 @@ function insertCss() {
     css.innerHTML = `
 .invisible {
     display: none;
+}
+
+#e6ng-settings {
+    position: absolute;
+    top: 70px;
+    right: 70px;
+    width: 50%;
+    height: 50%;
+    background-color: red;
+    z-index: 5;
+}
+
+#e6ng-settings-dragable {
+    background-color: green;
+    height: 35px;
 }
 
 .dtext-format-button {
@@ -587,3 +631,52 @@ async function postUrl(url, json) {
 function handleNetworkError() {
     Danbooru.error("A network error has occured");
 }
+
+//https://www.w3schools.com/howto/howto_js_draggable.asp
+function dragElement(element) {
+    let pos1 = 0;
+    let pos2 = 0;
+    let pos3 = 0;
+    let pos4 = 0;
+    if (document.getElementById(element.id + "-dragable")) {
+        document.getElementById(element.id + "-dragable").addEventListener("mousedown", e => {
+            e = e || window.event;
+            e.preventDefault();
+            // get the mouse cursor position at startup:
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.addEventListener("mouseup", closeDragElement);
+            // call a function whenever the cursor moves:
+            document.addEventListener("mousemove", elementDrag);
+        });
+    }
+
+    function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        if (!isOutOfViewport(element, pos1, pos2)) {
+            element.style.left = (element.offsetLeft - pos1) + "px";
+            element.style.top = (element.offsetTop - pos2) + "px";
+        }
+    }
+
+    function closeDragElement() {
+        // stop moving when mouse button is released:
+        document.removeEventListener("mouseup", closeDragElement);
+        document.removeEventListener("mousemove", elementDrag);
+    }
+}
+
+function isOutOfViewport(element, xOffset = 0, yOffset = 0) {
+    let bounding = element.getBoundingClientRect();
+    return bounding.left < xOffset ||
+        bounding.top < yOffset ||
+        bounding.right > window.innerWidth + xOffset ||
+        bounding.bottom > window.innerHeight + yOffset;
+};
