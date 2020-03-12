@@ -481,10 +481,16 @@ function addSettingsMenu() {
     settingsDiv.classList.add("invisible");
     const settingsDivDraggable = document.createElement("div");
     settingsDivDraggable.id = "e6ng-settings-dragable";
+    const settingsCloseButton = document.createElement("div");
+    settingsCloseButton.id = "e6ng-settings-close";
+    settingsCloseButton.innerHTML = "\u274C";
+    settingsDivDraggable.appendChild(settingsCloseButton);
     settingsDiv.appendChild(settingsDivDraggable);
 
-
     a.addEventListener("click", () => {
+        settingsDiv.classList.toggle("invisible");
+    });
+    settingsCloseButton.addEventListener("click", () => {
         settingsDiv.classList.toggle("invisible");
     });
 
@@ -544,6 +550,17 @@ function insertCss() {
 #e6ng-settings-dragable {
     background-color: green;
     height: 35px;
+    cursor: move;
+}
+
+#e6ng-settings-close {
+    background-color: yellow;
+    height: 100%;
+    width: 35px;
+    float: right;
+    line-height: 35px;
+    font-size: 35px;
+    cursor: default;
 }
 
 .dtext-format-button {
