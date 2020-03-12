@@ -489,6 +489,7 @@ function addSettingsMenu() {
 
     const settingsDivContent = document.createElement("div");
     settingsDivContent.id = "e6ng-settings-content";
+    settingsDivContent.classList.add("small-margin");
 
     const settingsTabbar = document.createElement("div");
     settingsTabbar.id = "e6ng-settings-tabbar";
@@ -559,7 +560,20 @@ function createSettingsDiv() {
 
 function createTinyAliasDiv() {
     const div = document.createElement("div");
-    div.style.backgroundColor = "orange";
+    const allAliases = getConfig("tinyalias");
+    for (const aliasName of Object.keys(allAliases)) {
+        const aliasDiv = document.createElement("div");
+        aliasDiv.classList.add("settings-alias-container");
+        const nameContainer = document.createElement("div");
+        nameContainer.classList.add("settings-alias-name");
+        nameContainer.innerText = aliasName;
+        aliasDiv.appendChild(nameContainer);
+
+        const input = document.createElement("textarea");
+        input.value = allAliases[aliasName];
+        aliasDiv.appendChild(input);
+        div.appendChild(aliasDiv)
+    }
     return div;
 }
 
@@ -652,10 +666,33 @@ function insertCss() {
 #e6ng-settings-content {
     height: 100%;
     border-radius: 5px;
+    overflow: auto;
 }
 
 .e6ng-tab-content {
     height: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.settings-alias-container {
+    padding-left: 5px;
+    padding-bottom: 5px;
+    width: 30%;
+    height: 100px;
+    margin-left: 5px;
+    display: flex;
+    flex-direction: column;
+    float: left;
+}
+
+.settings-alias-container textarea {
+    width: 100%;
+    height: 100%;
+}
+
+.settings-alias-name {
+    text-align: center;
 }
 
 .dtext-format-button {
@@ -670,8 +707,7 @@ function insertCss() {
 }
 
 .small-margin {
-    margin-left: 5px;
-    margin-top: 5px;
+    margin: 5px 5px 5px 5px;
 }
 
 .small-padding {
