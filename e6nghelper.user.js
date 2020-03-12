@@ -28,13 +28,15 @@ const settingsTabs = {
     if (locationCheck("/posts/")) {
         if (isLoggedIn()) {
             setTitle();
-            quickAddToBlacklist();
         }
         moveBottomNotice();
         showUploader();
     }
     if (locationCheck("/uploads/new")) {
         enhancePostUploader();
+    }
+    if (isLoggedIn()) {
+        quickAddToBlacklist();
     }
     modifyBlacklist();
     addExtraShortcuts();
