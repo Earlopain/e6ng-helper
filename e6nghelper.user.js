@@ -94,7 +94,7 @@ function quickAddToBlacklist() {
         a.innerText = "x ";
         a.href = "#";
         a.addEventListener("click", () => {
-            toggleBlacklistTag(tag.innerText);
+            toggleBlacklistTag(tag.innerText.replace(/ /g, "_"));
         });
         li.insertBefore(a, li.children[0]);
     }
