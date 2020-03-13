@@ -755,8 +755,20 @@ function createSpeudoLinkElement() {
 }
 
 async function insertCss() {
-    const css = document.createElement("style");
-    css.innerHTML = await getResource("style");
+    let css;
+    if (typeof GM_getResourceText !== "undefined") {
+        css = document.createElement("style");
+        css.innerHTML = GM_getResourceText("style");
+    } else if (typeof GM !== "undefined" && GM.getResourceUrl) {
+        css = document.createElement("link");
+        const url = await GM.getResourceUrl("style");
+        css.rel = "stylesheet";
+        css.type = "text/css";
+        css.href = url
+    } else {
+        Danooru.error("Unsupported userscript manager");
+        throw new Error("Unsupported userscript manager");
+    }
     document.head.appendChild(css);
 }
 
@@ -772,20 +784,6 @@ function getComputedStyle(element) {
                 )};`
         );
         return cssText;
-    }
-}
-
-async function getResource(name) {
-    debugger;
-    if (GM_getResourceText) {
-        return GM_getResourceText(name);
-    } else if (GM && GM.getResourceUrl) {
-        debugger;
-        const url = await await GM.getResourceUrl(name);
-        return await getUrl(url);
-    } else {
-        Danbooru.error("Unsuported Userscript manager");
-        throw new Error("Unsuported Userscript manager");
     }
 }
 
