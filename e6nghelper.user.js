@@ -18,7 +18,12 @@ const features = {
     "addSettingsMenu": {
         title: "Enable/Disable Settings",
         divFunction: settingsToggleDiv,
-        description: "Adds an extra entry to the e6 menu bar to open this view"
+        description: "Adds an extra entry to the e6 menu bar to open this view",
+        showSettingsToggle: false
+    },
+    "insertCss": {
+        description: "Adds style information so this doesn't look like trash",
+        showSettingsToggle: false
     },
     "setTitle": {
         needsLoggedIn: true,
@@ -51,9 +56,6 @@ const features = {
     },
     "insertDtextFormatting": {
         description: "Adds dtext formatting buttons. Select some text to enclose it"
-    },
-    "insertCss": {
-        description: "Adds style information so this doesn't look like trash"
     }
 };
 
@@ -602,6 +604,9 @@ function settingsToggleDiv() {
 
     for (const featureSettingName of Object.keys(features)) {
         const settingsDiv = document.createElement("div");
+        if (features[featureSettingName].showSettingsToggle === false) {
+            continue;
+        }
         const featureExplanationDiv = document.createElement("div");
         featureExplanationDiv.innerText = features[featureSettingName].description;
         const checkbox = document.createElement("input");
