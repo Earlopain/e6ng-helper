@@ -683,7 +683,7 @@ function insertCss() {
 }
 
 #e6ng-settings {
-    position: absolute;
+    position: fixed;
     top: 70px;
     right: 70px;
     width: 50%;
