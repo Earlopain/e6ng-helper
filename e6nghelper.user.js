@@ -10,7 +10,9 @@
 // @match        https://e621.net/*
 // @match        https://e926.net/*
 // @exclude      *.json
-// @resource     style /style.css
+// @grant        GM.getResourceUrl
+// @grant        GM_getResourceText
+// @resource     style style.css
 // ==/UserScript==
 
 const NETWORK_ERROR = -1;
@@ -752,9 +754,9 @@ function createSpeudoLinkElement() {
     return div;
 }
 
-function insertCss() {
+async function insertCss() {
     const css = document.createElement("style");
-    css.innerHTML = GM_getResourceText("style");
+    css.innerHTML = await getResource("style");
     document.head.appendChild(css);
 }
 
@@ -770,6 +772,20 @@ function getComputedStyle(element) {
                 )};`
         );
         return cssText;
+    }
+}
+
+async function getResource(name) {
+    debugger;
+    if (GM_getResourceText) {
+        return GM_getResourceText(name);
+    } else if (GM && GM.getResourceUrl) {
+        debugger;
+        const url = await await GM.getResourceUrl(name);
+        return await getUrl(url);
+    } else {
+        Danbooru.error("Unsuported Userscript manager");
+        throw new Error("Unsuported Userscript manager");
     }
 }
 
