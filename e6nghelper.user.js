@@ -15,7 +15,7 @@
 const NETWORK_ERROR = -1;
 
 const settingsTabs = {
-    "settings": {
+    "enabledfeatures": {
         title: "Enable/Disable Settings",
         divFunction: settingsToggleDiv
     },
@@ -28,33 +28,47 @@ const settingsTabs = {
 const features = {
     "setTitle": {
         needsLoggedIn: true,
-        location: "/posts/"
+        location: "/posts/",
+        description: "If you faved/upvoted a post you will get a \u2665/\u2191 indicator in the tab title"
     },
     "moveBottomNotice": {
-        location: "/posts/"
+        location: "/posts/",
+        description: "Moves the child/parent indicator on posts below the search bar for easy viewing"
     },
     "showUploader": {
-        location: "/posts/"
+        location: "/posts/",
+        description: "Readds who uploaded a post to the infos"
     },
     "enhancePostUploader": {
-        location: "/uploads/new"
+        location: "/uploads/new",
+        description: "Adds TinyAlias to the post uploder. Also adds the ability to check if a tag is valid or not"
     },
     "quickAddToBlacklist": {
-        needsLoggedIn: true
+        needsLoggedIn: true,
+        description: "Adds a (x) before tags so you can quickly add/remove them from your blacklist"
     },
-    "modifyBlacklist": {},
-    "addExtraShortcuts": {},
-    "insertDtextFormatting": {},
-    "addSettingsMenu": {},
-    "insertCss": {}
+    "modifyBlacklist": {
+        description: "Adds the possibility to hide which tags you have blacklisted"
+    },
+    "addExtraShortcuts": {
+        description: "Adds additional shortcuts, currently r to upvote. t for downvote"
+    },
+    "insertDtextFormatting": {
+        description: "Adds dtext formatting buttons. Select some text to enclose it"
+    },
+    "addSettingsMenu": {
+        description: "Adds an extra entry to the e6 menu bar to open this view"
+    },
+    "insertCss": {
+        description: "Adds style information so this doesn't look like trash"
+    }
 };
 
 (function () {
     'use strict';
 
-    const settings = getConfig("settings");
+    const enabledFeatures = getConfig("enabledfeatures", {});
     const loggedIn = isLoggedIn();
-
     for (const featureFunction of Object.keys(features)) {
         const featureDefinition = features[featureFunction];
         if (featureDefinition.needsLoggedIn === true && loggedIn === false) {
@@ -63,8 +77,10 @@ const features = {
         if (featureDefinition.location && locationCheck(featureDefinition.location) === false) {
             continue;
         }
-        if (settings === undefined || settings[featureFunction] !== false) {
-            eval(featureFunction + "(settings)");
+        if (enabledFeatures[featureFunction] !== false) {
+            //Using eval here because I don't know how to access functions otherwise
+            //Normally in js you would use window[functioname]() but that doesn't work in userscripts
+            eval(featureFunction + "(features)");
         }
     }
 
@@ -502,7 +518,7 @@ function addSettingsMenu() {
     a.innerText = "E6NG";
     a.href = "#";
     a.addEventListener("click", () => {
-        openSettingsTab("settings");
+        openSettingsTab("enabledfeatures");
     });
 
     const settingsDiv = document.createElement("div");
@@ -580,7 +596,40 @@ function createSettingsDiv(shorthand) {
 
 function settingsToggleDiv() {
     const div = document.createElement("div");
-    div.innerText = "Something will be here soon";
+    const explainationDiv = document.createElement("div");
+    explainationDiv.innerText = "Here you can toggle some settings if you do not want/need them";
+    div.appendChild(explainationDiv);
+
+    const settingsContainerDiv = document.createElement("div");
+
+    const settings = getConfig("enabledfeatures", {});
+
+    for (const featureSettingName of Object.keys(features)) {
+        const settingsDiv = document.createElement("div");
+        const featureExplanationDiv = document.createElement("div");
+        featureExplanationDiv.innerText = features[featureSettingName].description;
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = settings[featureSettingName] !== false;
+
+        checkbox.addEventListener("click", () => {
+            settings[featureSettingName] = checkbox.checked;
+        });
+
+        settingsDiv.appendChild(featureExplanationDiv);
+        settingsDiv.appendChild(checkbox);
+        settingsContainerDiv.appendChild(settingsDiv);
+    }
+
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Save";
+
+    saveButton.addEventListener("click", () => {
+        setConfig("enabledfeatures", settings);
+    });
+
+    div.appendChild(settingsContainerDiv);
+    div.appendChild(saveButton);
     return div;
 }
 
