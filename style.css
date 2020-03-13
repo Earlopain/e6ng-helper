@@ -1,0 +1,136 @@
+.invisible {
+    display: none !important;
+}
+
+#e6ng-settings {
+    position: fixed;
+    top: 70px;
+    right: 70px;
+    width: 50%;
+    height: 50%;
+    background-color: #152F56;
+    z-index: 5;
+    display: flex;
+    flex-flow: column;
+    outline: 3px solid black;
+}
+
+#e6ng-settings-dragable {
+    height: 35px;
+    cursor: move;
+    border-radius: 5px 5px 0px 0px;
+    font-size: 20px;
+    line-height: 30px;
+    padding-left: 5px;
+}
+
+#e6ng-settings-close {
+    height: 100%;
+    width: 35px;
+    float: right;
+    line-height: 25px;
+    font-size: 25px;
+    text-align: right;
+    cursor: default;
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+#e6ng-settings-tabbar {
+    border-radius: 5px;
+}
+
+.e6ng-settings-tab {
+    display: inline-block;
+    border-radius: 5px;
+    color: lightgrey;
+}
+
+.e6ng-settings-tab-selected {
+    font-weight: bold;
+    border-radius: 5px;
+    color: white;
+}
+
+#e6ng-settings-content {
+    height: 100%;
+    border-radius: 5px;
+    overflow: auto;
+}
+
+.e6ng-tab-content {
+    height: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#e6ng-settings-alias-valueinput {
+    min-width: 250px;
+    display: inline-block;
+}
+
+#e6ng-settings-all-aliases {
+    display: inline-block;
+    width: 100%;
+}
+
+.e6ng-link {
+    display: inline-block;
+    white-space: pre;
+    color: #b4c7d9;
+    cursor: pointer;
+}
+
+.e6ng-link:hover {
+    color: #2e76b4;
+}
+
+.settings-alias-container {
+    padding-right: 10px;
+    padding-bottom: 5px;
+    width: 30%;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    float: left;
+}
+
+.settings-alias-container textarea {
+    width: 100%;
+    height: 100%;
+}
+
+.settings-alias-name {
+    text-align: center;
+}
+
+.dtext-format-button {
+    width: 60px !important;
+    height: 100% !important;
+    margin-right: 5px !important;
+    margin-bottom: 5px !important;
+}
+
+.dtext-format-button:hover {
+    background-color: rgb(34, 65, 115) !important;
+}
+
+.small-margin {
+    margin: 5px 5px 5px 5px;
+}
+
+.small-padding {
+    padding: 5px 5px 5px 5px;
+}
+
+.tag-status-div {
+    margin-top: 5px;
+    height: 8px;
+}
+div#c-posts div.bottom-notices {
+    display: block;
+}
+
+#has-children-relationship-preview {
+    display: grid;
+}
