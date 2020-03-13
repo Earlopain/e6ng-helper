@@ -113,7 +113,7 @@ function showUploader() {
     const ul = document.getElementById("post-information").querySelector("ul");
     const li = document.createElement("li");
     const a = document.createElement("a");
-    a.href = "https://e621.net/users/" + uploaderId;
+    a.href = "/users/" + uploaderId;
     a.innerText = uploaderName;
     li.appendChild(document.createTextNode("Uploader: "));
     li.appendChild(a);
@@ -124,9 +124,8 @@ function quickAddToBlacklist() {
     const tags = document.querySelectorAll(".search-tag");
     for (const tag of tags) {
         const li = tag.closest("li");
-        const a = document.createElement("a");
+        const a = createSpeudoLinkElement();
         a.innerText = "x ";
-        a.href = "#";
         a.addEventListener("click", () => {
             toggleBlacklistTag(tag.innerText.replace(/ /g, "_"));
         });
@@ -154,7 +153,7 @@ async function toggleBlacklistTag(tag) {
 async function getCurrentBlacklist() {
     let response;
     try {
-        response = await getUrl("https://e621.net/users/" + getUserid() + ".json");
+        response = await getUrl("/users/" + getUserid() + ".json");
     } catch (error) {
         handleNetworkError();
         return NETWORK_ERROR;
@@ -165,7 +164,7 @@ async function getCurrentBlacklist() {
 
 async function saveBlacklist(blacklistArray) {
     const blacklistString = blacklistArray.join("\n");
-    const url = "https://e621.net/users/" + getUserid() + ".json";
+    const url = "/users/" + getUserid() + ".json";
     const json = {
         "_method": "patch",
         "user[blacklisted_tags]": blacklistString
@@ -383,7 +382,7 @@ async function getTagInfo(tag, infoElement) {
 
     let request;
     try {
-        request = await getUrl("https://e621.net/tags/" + tag + ".json");
+        request = await getUrl("/tags/" + tag + ".json");
     } catch (error) {
         handleNetworkError();
         return;
@@ -400,7 +399,7 @@ async function getTagInfo(tag, infoElement) {
         infoElement.innerText = "Checking alias...";
     }
     try {
-        request = await getUrl("https://e621.net/tag_aliases.json?search[antecedent_name]=" + tag);
+        request = await getUrl("/tag_aliases.json?search[antecedent_name]=" + tag);
     } catch (error) {
         handleNetworkError();
         return;
@@ -412,7 +411,7 @@ async function getTagInfo(tag, infoElement) {
     result.is_alias = true;
     const trueTagName = aliasJson[0].consequent_name;
     try {
-        request = await getUrl("https://e621.net/tags/" + encodeURIComponent(trueTagName) + ".json");
+        request = await getUrl("/tags/" + encodeURIComponent(trueTagName) + ".json");
     } catch (error) {
         handleNetworkError();
         return;
@@ -431,9 +430,8 @@ function modifyBlacklist() {
     }
     const divContainer = document.createElement("div");
     divContainer.style.paddingBottom = "5px";
-    const a = document.createElement("a");
+    const a = createSpeudoLinkElement();
     a.innerHTML = "Click to " + getText(getConfig("hideblacklist", false));
-    a.href = "#";
     //only modify setting after hiding blacklist initially
     //becuase a.click also results in changing the setting
     let allowSetSettings = false;
@@ -508,10 +506,9 @@ function addSettingsMenu() {
     const li = document.createElement("li");
     li.id = "nav-e6ng-helper";
 
-    const a = document.createElement("a");
+    const a = createSpeudoLinkElement();
     a.id = "nav-e6ng-helper-link";
     a.innerText = "E6NG";
-    a.href = "#";
     a.addEventListener("click", () => {
         openSettingsTab("addSettingsMenu");
     });
@@ -748,6 +745,12 @@ function saveSettings(settings) {
     localStorage.setItem("e6nghelper", JSON.stringify(settings));
 }
 
+function createSpeudoLinkElement() {
+    const div = document.createElement("div");
+    div.classList.add("e6ng-link");
+    return div;
+}
+
 function insertCss() {
     const css = document.createElement("style");
     css.innerHTML = `
@@ -825,6 +828,17 @@ function insertCss() {
 #e6ng-settings-all-aliases {
     display: inline-block;
     width: 100%;
+}
+
+.e6ng-link {
+    display: inline-block;
+    white-space: pre;
+    color: #b4c7d9;
+    cursor: pointer;
+}
+
+.e6ng-link:hover {
+    color: #2e76b4;
 }
 
 .settings-alias-container {
@@ -915,7 +929,7 @@ async function request(url, method, data = {}) {
             }
             requestInfo.body = postData.join("&");
         }
-        const request = await fetch(url, requestInfo);
+        const request = await fetch(location.protocol + "//" + location.host + url, requestInfo);
         if (request.status >= 200 && request.status < 400) {
             resolve(await request.text());
         } else {
