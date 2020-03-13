@@ -14,18 +14,12 @@
 
 const NETWORK_ERROR = -1;
 
-const settingsTabs = {
-    "enabledfeatures": {
-        title: "Enable/Disable Settings",
-        divFunction: settingsToggleDiv
-    },
-    "tinyalias": {
-        title: "TinyAlias",
-        divFunction: createTinyAliasDiv
-    }
-};
-
 const features = {
+    "addSettingsMenu": {
+        title: "Enable/Disable Settings",
+        divFunction: settingsToggleDiv,
+        description: "Adds an extra entry to the e6 menu bar to open this view"
+    },
     "setTitle": {
         needsLoggedIn: true,
         location: "/posts/",
@@ -41,6 +35,8 @@ const features = {
     },
     "enhancePostUploader": {
         location: "/uploads/new",
+        title: "TinyAlias",
+        divFunction: createTinyAliasDiv,
         description: "Adds TinyAlias to the post uploder. Also adds the ability to check if a tag is valid or not"
     },
     "quickAddToBlacklist": {
@@ -55,9 +51,6 @@ const features = {
     },
     "insertDtextFormatting": {
         description: "Adds dtext formatting buttons. Select some text to enclose it"
-    },
-    "addSettingsMenu": {
-        description: "Adds an extra entry to the e6 menu bar to open this view"
     },
     "insertCss": {
         description: "Adds style information so this doesn't look like trash"
@@ -338,7 +331,7 @@ function enhancePostUploader() {
     const tinyAliasButton = document.createElement("button");
     tinyAliasButton.classList.add("small-margin");
     tinyAliasButton.innerText = "TinyAlias";
-    tinyAliasButton.addEventListener("click", () => openSettingsTab("tinyalias"));
+    tinyAliasButton.addEventListener("click", () => openSettingsTab("enhancePostUploader"));
 
     divContainer.appendChild(document.createElement("br"));
     divContainer.appendChild(tagInput);
@@ -518,7 +511,7 @@ function addSettingsMenu() {
     a.innerText = "E6NG";
     a.href = "#";
     a.addEventListener("click", () => {
-        openSettingsTab("enabledfeatures");
+        openSettingsTab("addSettingsMenu");
     });
 
     const settingsDiv = document.createElement("div");
@@ -544,12 +537,15 @@ function addSettingsMenu() {
     const settingsTabbar = document.createElement("div");
     settingsTabbar.id = "e6ng-settings-tabbar";
 
-    for (const shorthand of Object.keys(settingsTabs)) {
-        const tab = settingsTabs[shorthand];
-        const tabDiv = createSettingsDiv(shorthand);
+    for (const featureName of Object.keys(features)) {
+        const feature = features[featureName];
+        if (feature.divFunction === undefined) {
+            continue;
+        }
+        const tabDiv = createSettingsDiv(featureName);
         const tabSelector = document.createElement("div");
-        tabSelector.id = "e6ng-settings-tab-" + shorthand;
-        tabSelector.innerText = tab.title;
+        tabSelector.id = "e6ng-settings-tab-" + featureName;
+        tabSelector.innerText = feature.title;
         tabSelector.classList.add("e6ng-settings-tab");
         tabSelector.classList.add("small-padding");
 
@@ -561,7 +557,7 @@ function addSettingsMenu() {
                 element.classList.remove("e6ng-settings-tab-selected");
             }
             tabSelector.classList.add("e6ng-settings-tab-selected");
-            document.getElementById("e6ng-tab-content-" + shorthand).classList.remove("invisible");
+            document.getElementById("e6ng-tab-content-" + featureName).classList.remove("invisible");
         });
         settingsTabbar.appendChild(tabSelector);
         settingsDivContent.appendChild(tabDiv);
@@ -578,19 +574,19 @@ function addSettingsMenu() {
     dragElement(settingsDiv);
 }
 
-function openSettingsTab(shorthand) {
+function openSettingsTab(featureName) {
     document.getElementById("e6ng-settings").classList.remove("invisible");
-    document.getElementById("e6ng-settings-tab-" + shorthand).click();
+    document.getElementById("e6ng-settings-tab-" + featureName).click();
 }
 
-function redrawSettingsTab(shorthand) {
-    document.getElementById("e6ng-tab-content-" + shorthand).replaceWith(createSettingsDiv(shorthand));
+function redrawSettingsTab(featureName) {
+    document.getElementById("e6ng-tab-content-" + featureName).replaceWith(createSettingsDiv(featureName));
 }
 
-function createSettingsDiv(shorthand) {
-    const tabDiv = settingsTabs[shorthand].divFunction();
+function createSettingsDiv(featureName) {
+    const tabDiv = features[featureName].divFunction();
     tabDiv.classList.add("e6ng-tab-content");
-    tabDiv.id = "e6ng-tab-content-" + shorthand;
+    tabDiv.id = "e6ng-tab-content-" + featureName;
     return tabDiv;
 }
 
