@@ -13,6 +13,8 @@
 // @grant        GM.getResourceUrl
 // @grant        GM_getResourceText
 // @resource     style style.css
+// @require      util.js?v=1
+// @require      settingsPages.js?v=1
 // ==/UserScript==
 
 const NETWORK_ERROR = -1;
@@ -134,48 +136,48 @@ function quickAddToBlacklist() {
         });
         li.insertBefore(a, li.children[0]);
     }
-}
 
-async function toggleBlacklistTag(tag) {
-    Danbooru.notice("Getting current blacklist");
-    let currentBlacklist = await getCurrentBlacklist();
-    if (currentBlacklist === NETWORK_ERROR) {
-        return;
+    async function toggleBlacklistTag(tag) {
+        Danbooru.notice("Getting current blacklist");
+        let currentBlacklist = await getCurrentBlacklist();
+        if (currentBlacklist === NETWORK_ERROR) {
+            return;
+        }
+        if (currentBlacklist.indexOf(tag) === -1) {
+            currentBlacklist.push(tag);
+            Danbooru.notice("Adding " + tag + " to blacklist");
+        } else {
+            currentBlacklist = currentBlacklist.filter(e => e !== tag);
+            Danbooru.notice("Removing " + tag + " from blacklist");
+        }
+        await saveBlacklist(currentBlacklist);
+        Danbooru.notice("Finished blacklist");
     }
-    if (currentBlacklist.indexOf(tag) === -1) {
-        currentBlacklist.push(tag);
-        Danbooru.notice("Adding " + tag + " to blacklist");
-    } else {
-        currentBlacklist = currentBlacklist.filter(e => e !== tag);
-        Danbooru.notice("Removing " + tag + " from blacklist");
-    }
-    await saveBlacklist(currentBlacklist);
-    Danbooru.notice("Finished blacklist");
-}
 
-async function getCurrentBlacklist() {
-    let response;
-    try {
-        response = await getUrl("/users/" + getUserid() + ".json");
-    } catch (error) {
-        handleNetworkError();
-        return NETWORK_ERROR;
+    async function getCurrentBlacklist() {
+        let response;
+        try {
+            response = await getUrl("/users/" + getUserid() + ".json");
+        } catch (error) {
+            handleNetworkError();
+            return NETWORK_ERROR;
+        }
+        const json = JSON.parse(response);
+        return json.blacklisted_tags.split("\n");
     }
-    const json = JSON.parse(response);
-    return json.blacklisted_tags.split("\n");
-}
 
-async function saveBlacklist(blacklistArray) {
-    const blacklistString = blacklistArray.join("\n");
-    const url = "/users/" + getUserid() + ".json";
-    const json = {
-        "_method": "patch",
-        "user[blacklisted_tags]": blacklistString
-    }
-    try {
-        await postUrl(url, json);
-    } catch (error) {
-        handleNetworkError();
+    async function saveBlacklist(blacklistArray) {
+        const blacklistString = blacklistArray.join("\n");
+        const url = "/users/" + getUserid() + ".json";
+        const json = {
+            "_method": "patch",
+            "user[blacklisted_tags]": blacklistString
+        }
+        try {
+            await postUrl(url, json);
+        } catch (error) {
+            handleNetworkError();
+        }
     }
 }
 
@@ -364,65 +366,57 @@ function enhancePostUploader() {
         }
     }
 
-}
+    async function getTagInfo(tag, infoElement) {
+        tag = encodeURIComponent(tag);
+        const result = {
+            count: 0,
+            invalid: false,
+            is_alias: false,
+            true_name: undefined
+        }
 
-function prepareInput(input) {
-    return input.trim().toLowerCase();
-}
-
-function prepareTagInput(input) {
-    return input.trim().toLowerCase().replace(/ /g, "_");
-}
-
-async function getTagInfo(tag, infoElement) {
-    tag = encodeURIComponent(tag);
-    const result = {
-        count: 0,
-        invalid: false,
-        is_alias: false,
-        true_name: undefined
-    }
-
-    let request;
-    try {
-        request = await getUrl("/tags/" + tag + ".json");
-    } catch (error) {
-        handleNetworkError();
-        return;
-    }
-    let tagJson = JSON.parse(request);
-    if (tagJson === null) {
-        result.invalid = true;
-        return result;
-    } else if (tagJson.post_count !== 0) {
+        let request;
+        try {
+            request = await getUrl("/tags/" + tag + ".json");
+        } catch (error) {
+            handleNetworkError();
+            return;
+        }
+        let tagJson = JSON.parse(request);
+        if (tagJson === null) {
+            result.invalid = true;
+            return result;
+        } else if (tagJson.post_count !== 0) {
+            result.count = tagJson.post_count;
+            return result;
+        }
+        if (infoElement) {
+            infoElement.innerText = "Checking alias...";
+        }
+        try {
+            request = await getUrl("/tag_aliases.json?search[antecedent_name]=" + tag);
+        } catch (error) {
+            handleNetworkError();
+            return;
+        }
+        const aliasJson = JSON.parse(request);
+        if (aliasJson[0] === undefined) {
+            return result;
+        }
+        result.is_alias = true;
+        const trueTagName = aliasJson[0].consequent_name;
+        try {
+            request = await getUrl("/tags/" + encodeURIComponent(trueTagName) + ".json");
+        } catch (error) {
+            handleNetworkError();
+            return;
+        }
+        tagJson = JSON.parse(request);
         result.count = tagJson.post_count;
+        result.true_name = trueTagName;
         return result;
     }
-    if (infoElement) {
-        infoElement.innerText = "Checking alias...";
-    }
-    try {
-        request = await getUrl("/tag_aliases.json?search[antecedent_name]=" + tag);
-    } catch (error) {
-        handleNetworkError();
-        return;
-    }
-    const aliasJson = JSON.parse(request);
-    if (aliasJson[0] === undefined) {
-        return result;
-    }
-    result.is_alias = true;
-    const trueTagName = aliasJson[0].consequent_name;
-    try {
-        request = await getUrl("/tags/" + encodeURIComponent(trueTagName) + ".json");
-    } catch (error) {
-        handleNetworkError();
-        return;
-    }
-    tagJson = JSON.parse(request);
-    result.count = tagJson.post_count;
-    result.true_name = trueTagName;
-    return result;
+
 }
 
 function modifyBlacklist() {
@@ -460,418 +454,18 @@ function modifyBlacklist() {
 }
 
 function addExtraShortcuts() {
+    const loggedIn = isLoggedIn();
+    const onPostsPage = locationCheck("/posts/");
     document.body.addEventListener("keypress", e => {
         if (e.target.type === "textarea" || e.target.type === "input") {
             return;
         }
-        if (locationCheck("/posts/")) {
-            handlePostShortcuts(e);
-        }
-    });
-}
-
-function handlePostShortcuts(e) {
-    const loggedIn = isLoggedIn();
-    if (e.keyCode === 114 && loggedIn) { //upvote
-        document.querySelector(".post-vote-up-link").click();
-    } else if (e.keyCode === 116 && loggedIn) { //downvote
-        document.querySelector(".post-vote-down-link").click();
-    }
-}
-
-function locationCheck(location) {
-    const domain = document.location.protocol + "//" + document.location.host;
-    return document.location.href.startsWith(domain + location);
-}
-
-function isLoggedIn() {
-    return getUsername() !== "Anonymous";
-}
-
-function getMeta(name) {
-    return document.head.querySelector("[name~=" + name + "][content]").content;
-}
-
-function getUsername() {
-    return getMeta("current-user-name");
-}
-
-function getUserid() {
-    return getMeta("current-user-id");
-}
-
-function getAuthenticityToken() {
-    return getMeta("csrf-token");
-}
-
-function addSettingsMenu() {
-    const header = document.getElementById("nav").querySelector("menu");
-    const li = document.createElement("li");
-    li.id = "nav-e6ng-helper";
-
-    const a = createSpeudoLinkElement();
-    a.id = "nav-e6ng-helper-link";
-    a.innerText = "E6NG";
-    a.addEventListener("click", () => {
-        openSettingsTab("addSettingsMenu");
-    });
-
-    const settingsDiv = document.createElement("div");
-    settingsDiv.id = "e6ng-settings";
-    settingsDiv.classList.add("invisible");
-    const settingsDivDraggable = document.createElement("div");
-    settingsDivDraggable.id = "e6ng-settings-dragable";
-    settingsDivDraggable.innerText = "E6NG Helper Settings";
-
-    const settingsCloseButton = document.createElement("div");
-    settingsCloseButton.id = "e6ng-settings-close";
-    settingsCloseButton.innerHTML = "\u274C";
-    settingsCloseButton.addEventListener("click", () => {
-        settingsDiv.classList.add("invisible");
-    });
-
-    settingsDivDraggable.appendChild(settingsCloseButton);
-
-    const settingsDivContent = document.createElement("div");
-    settingsDivContent.id = "e6ng-settings-content";
-    settingsDivContent.classList.add("small-margin");
-
-    const settingsTabbar = document.createElement("div");
-    settingsTabbar.id = "e6ng-settings-tabbar";
-
-    for (const featureName of Object.keys(features)) {
-        const feature = features[featureName];
-        if (feature.divFunction === undefined) {
-            continue;
-        }
-        const tabDiv = createSettingsDiv(featureName);
-        const tabSelector = document.createElement("div");
-        tabSelector.id = "e6ng-settings-tab-" + featureName;
-        tabSelector.innerText = feature.title;
-        tabSelector.classList.add("e6ng-settings-tab");
-        tabSelector.classList.add("small-padding");
-
-        tabSelector.addEventListener("click", () => {
-            for (const element of document.querySelectorAll(".e6ng-tab-content")) {
-                element.classList.add("invisible");
+        if (onPostsPage && loggedIn) {
+            if (e.keyCode === 114) { //upvote
+                document.querySelector(".post-vote-up-link").click();
+            } else if (e.keyCode === 116) { //downvote
+                document.querySelector(".post-vote-down-link").click();
             }
-            for (const element of document.querySelectorAll(".e6ng-settings-tab-selected")) {
-                element.classList.remove("e6ng-settings-tab-selected");
-            }
-            tabSelector.classList.add("e6ng-settings-tab-selected");
-            document.getElementById("e6ng-tab-content-" + featureName).classList.remove("invisible");
-        });
-        settingsTabbar.appendChild(tabSelector);
-        settingsDivContent.appendChild(tabDiv);
-    }
-
-    settingsDiv.appendChild(settingsDivDraggable);
-    settingsDiv.appendChild(settingsTabbar);
-    settingsDiv.appendChild(settingsDivContent);
-
-    li.appendChild(a);
-    header.insertBefore(document.createTextNode(" "), header.children[header.childElementCount - 1]);
-    header.insertBefore(li, header.children[header.childElementCount - 1]);
-    document.body.appendChild(settingsDiv);
-    dragElement(settingsDiv);
-}
-
-function openSettingsTab(featureName) {
-    document.getElementById("e6ng-settings").classList.remove("invisible");
-    document.getElementById("e6ng-settings-tab-" + featureName).click();
-}
-
-function redrawSettingsTab(featureName) {
-    document.getElementById("e6ng-tab-content-" + featureName).replaceWith(createSettingsDiv(featureName));
-}
-
-function createSettingsDiv(featureName) {
-    const tabDiv = features[featureName].divFunction();
-    tabDiv.classList.add("e6ng-tab-content");
-    tabDiv.id = "e6ng-tab-content-" + featureName;
-    return tabDiv;
-}
-
-function settingsToggleDiv() {
-    const div = document.createElement("div");
-    const explainationDiv = document.createElement("div");
-    explainationDiv.innerText = "Here you can toggle some settings if you do not want/need them";
-    div.appendChild(explainationDiv);
-
-    const settingsContainerDiv = document.createElement("div");
-
-    const settings = getConfig("enabledfeatures", {});
-
-    for (const featureSettingName of Object.keys(features)) {
-        const settingsDiv = document.createElement("div");
-        if (features[featureSettingName].showSettingsToggle === false) {
-            continue;
         }
-        const featureExplanationDiv = document.createElement("div");
-        featureExplanationDiv.innerText = features[featureSettingName].description;
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = settings[featureSettingName] !== false;
-
-        checkbox.addEventListener("click", () => {
-            settings[featureSettingName] = checkbox.checked;
-        });
-
-        settingsDiv.appendChild(featureExplanationDiv);
-        settingsDiv.appendChild(checkbox);
-        settingsContainerDiv.appendChild(settingsDiv);
-    }
-
-    const saveButton = document.createElement("button");
-    saveButton.innerText = "Save";
-
-    saveButton.addEventListener("click", () => {
-        setConfig("enabledfeatures", settings);
     });
-
-    div.appendChild(settingsContainerDiv);
-    div.appendChild(saveButton);
-    return div;
 }
-
-function createTinyAliasDiv() {
-    const div = document.createElement("div");
-    const explainationDiv = document.createElement("div");
-    explainationDiv.innerText = "When you are uploading a post and insert a tag with the name you typed here, the complete text you entered will be inserted into the tag box";
-    div.appendChild(explainationDiv);
-    const createAliasDiv = document.createElement("div");
-    createAliasDiv.appendChild(document.createTextNode("Alias name: "));
-
-    const aliasNameInput = document.createElement("input");
-    createAliasDiv.appendChild(aliasNameInput);
-    createAliasDiv.appendChild(document.createTextNode(" Alias content: "));
-
-
-    const aliasValueInput = document.createElement("textarea");
-    aliasValueInput.id = "e6ng-settings-alias-valueinput";
-    aliasValueInput.classList.add("small-margin");
-
-    createAliasDiv.appendChild(aliasValueInput);
-
-    const aliasCreateButton = document.createElement("button");
-    aliasCreateButton.innerText = "Create";
-    aliasCreateButton.classList.add("small-margin");
-    aliasCreateButton.classList.add("small-padding");
-    aliasCreateButton.addEventListener("click", () => {
-        const aliasName = aliasNameInput.value.toLowerCase();
-        const aliasContent = aliasValueInput.value.toLowerCase();
-        if (aliasName === "") {
-            return;
-        }
-        const currentAliases = getConfig("tinyalias", {});
-        currentAliases[aliasName] = aliasContent;
-        setConfig("tinyalias", currentAliases);
-        Danbooru.notice("Added TinyAlias");
-        redrawSettingsTab("tinyalias");
-    });
-
-    createAliasDiv.appendChild(aliasCreateButton);
-
-    div.appendChild(createAliasDiv);
-
-    const allAliases = getConfig("tinyalias", {});
-    const allAliasesDiv = document.createElement("div");
-    allAliasesDiv.id = "e6ng-settings-all-aliases";
-    for (const aliasName of Object.keys(allAliases)) {
-        const aliasDiv = document.createElement("div");
-        aliasDiv.classList.add("settings-alias-container");
-        const nameContainer = document.createElement("div");
-        nameContainer.classList.add("settings-alias-name");
-        nameContainer.innerText = aliasName;
-        const deleteAlias = document.createElement("a");
-        deleteAlias.href = "#";
-        deleteAlias.innerText = " (remove)";
-
-        deleteAlias.addEventListener("click", () => {
-            aliasDiv.remove();
-        });
-
-        nameContainer.appendChild(deleteAlias);
-        aliasDiv.appendChild(nameContainer);
-
-        const input = document.createElement("textarea");
-        input.value = allAliases[aliasName];
-        aliasDiv.appendChild(input);
-        allAliasesDiv.appendChild(aliasDiv)
-    }
-    div.appendChild(allAliasesDiv);
-
-    const saveButton = document.createElement("button");
-    saveButton.innerText = "Save";
-
-    saveButton.addEventListener("click", () => {
-        const aliases = {};
-        for (const alias of allAliasesDiv.children) {
-            const aliasName = alias.querySelector(".settings-alias-name").childNodes[0].textContent;
-            const aliasContent = alias.querySelector("textarea").value;
-            aliases[aliasName] = aliasContent;
-        }
-        setConfig("tinyalias", aliases);
-        Danbooru.notice("TinyAlias saved");
-    });
-
-    div.appendChild(saveButton);
-    return div;
-}
-
-function getConfig(name, defaultValue) {
-    const settings = getSettings();
-    if (settings === null || settings[name] === undefined) {
-        return defaultValue;
-    }
-    return settings[name];
-}
-
-function setConfig(name, value) {
-    const settings = getSettings();
-    settings[name] = value;
-    saveSettings(settings);
-    return value;
-}
-
-function getSettings() {
-    const storage = localStorage.getItem("e6nghelper");
-    if (storage === null) {
-        return {};
-    }
-    else {
-        return JSON.parse(storage);
-    }
-}
-
-function saveSettings(settings) {
-    localStorage.setItem("e6nghelper", JSON.stringify(settings));
-}
-
-function createSpeudoLinkElement() {
-    const div = document.createElement("div");
-    div.classList.add("e6ng-link");
-    return div;
-}
-
-async function insertCss() {
-    let css;
-    if (typeof GM_getResourceText !== "undefined") {
-        css = document.createElement("style");
-        css.innerHTML = GM_getResourceText("style");
-    } else if (typeof GM !== "undefined" && GM.getResourceUrl) {
-        css = document.createElement("link");
-        const url = await GM.getResourceUrl("style");
-        css.rel = "stylesheet";
-        css.type = "text/css";
-        css.href = url
-    } else {
-        Danooru.error("Unsupported userscript manager");
-        throw new Error("Unsupported userscript manager");
-    }
-    document.head.appendChild(css);
-}
-
-function getComputedStyle(element) {
-    const styles = window.getComputedStyle(element);
-    if (styles.cssText !== '') {
-        return styles.cssText;
-    } else { //Fix for firefox
-        const cssText = Object.values(styles).reduce(
-            (css, propertyName) =>
-                `${css}${propertyName}:${styles.getPropertyValue(
-                    propertyName
-                )};`
-        );
-        return cssText;
-    }
-}
-
-async function request(url, method, data = {}) {
-    return new Promise(async (resolve, reject) => {
-        let requestInfo = {
-            "credentials": "include",
-            "headers": {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Header": "Userscript E6NG Helper by Earlopain"
-            },
-            "method": method,
-            "mode": "cors"
-        };
-        if (method !== "GET" && method !== "get") {
-            let postData = []
-            data["authenticity_token"] = getAuthenticityToken();
-            for (const key of Object.keys(data)) {
-                postData.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
-            }
-            requestInfo.body = postData.join("&");
-        }
-        const request = await fetch(location.protocol + "//" + location.host + url, requestInfo);
-        if (request.status >= 200 && request.status < 400) {
-            resolve(await request.text());
-        } else {
-            reject();
-        }
-    })
-}
-
-async function getUrl(url) {
-    return await request(url, "GET");
-}
-
-async function postUrl(url, json) {
-    return await request(url, "POST", json);
-}
-
-function handleNetworkError() {
-    Danbooru.error("A network error has occured");
-}
-
-//https://www.w3schools.com/howto/howto_js_draggable.asp
-function dragElement(element) {
-    let pos1 = 0;
-    let pos2 = 0;
-    let pos3 = 0;
-    let pos4 = 0;
-    if (document.getElementById(element.id + "-dragable")) {
-        document.getElementById(element.id + "-dragable").addEventListener("mousedown", e => {
-            e = e || window.event;
-            e.preventDefault();
-            // get the mouse cursor position at startup:
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            document.addEventListener("mouseup", closeDragElement);
-            // call a function whenever the cursor moves:
-            document.addEventListener("mousemove", elementDrag);
-        });
-    }
-
-    function elementDrag(e) {
-        e = e || window.event;
-        e.preventDefault();
-        // calculate the new cursor position:
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        // set the element's new position:
-        if (!isOutOfViewport(element, pos1, pos2)) {
-            element.style.left = (element.offsetLeft - pos1) + "px";
-            element.style.top = (element.offsetTop - pos2) + "px";
-        }
-    }
-
-    function closeDragElement() {
-        // stop moving when mouse button is released:
-        document.removeEventListener("mouseup", closeDragElement);
-        document.removeEventListener("mousemove", elementDrag);
-    }
-}
-
-function isOutOfViewport(element, xOffset = 0, yOffset = 0) {
-    let bounding = element.getBoundingClientRect();
-    return bounding.left < xOffset ||
-        bounding.top < yOffset ||
-        bounding.right > window.innerWidth + xOffset ||
-        bounding.bottom > window.innerHeight + yOffset;
-};
