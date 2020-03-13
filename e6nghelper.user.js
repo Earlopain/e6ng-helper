@@ -25,26 +25,49 @@ const settingsTabs = {
     }
 };
 
+const features = {
+    "setTitle": {
+        needsLoggedIn: true,
+        location: "/posts/"
+    },
+    "moveBottomNotice": {
+        location: "/posts/"
+    },
+    "showUploader": {
+        location: "/posts/"
+    },
+    "enhancePostUploader": {
+        location: "/uploads/new"
+    },
+    "quickAddToBlacklist": {
+        needsLoggedIn: true
+    },
+    "modifyBlacklist": {},
+    "addExtraShortcuts": {},
+    "insertDtextFormatting": {},
+    "addSettingsMenu": {},
+    "insertCss": {}
+};
+
 (function () {
     'use strict';
-    if (locationCheck("/posts/")) {
-        if (isLoggedIn()) {
-            setTitle();
+
+    const settings = getConfig("settings");
+    const loggedIn = isLoggedIn();
+
+    for (const featureFunction of Object.keys(features)) {
+        const featureDefinition = features[featureFunction];
+        if (featureDefinition.needsLoggedIn === true && loggedIn === false) {
+            continue;
         }
-        moveBottomNotice();
-        showUploader();
+        if (featureDefinition.location && locationCheck(featureDefinition.location) === false) {
+            continue;
+        }
+        if (settings === undefined || settings[featureFunction] !== false) {
+            eval(featureFunction + "(settings)");
+        }
     }
-    if (locationCheck("/uploads/new")) {
-        enhancePostUploader();
-    }
-    if (isLoggedIn()) {
-        quickAddToBlacklist();
-    }
-    modifyBlacklist();
-    addExtraShortcuts();
-    insertDtextFormatting();
-    addSettingsMenu();
-    insertCss();
+
 })();
 
 function setTitle() {
