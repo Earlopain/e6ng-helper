@@ -828,7 +828,8 @@ async function request(url, method, data = {}) {
         let requestInfo = {
             "credentials": "include",
             "headers": {
-                "Content-Type": "application/x-www-form-urlencoded"
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Header": "Userscript E6NG Helper by Earlopain"
             },
             "method": method,
             "mode": "cors"
