@@ -111,6 +111,7 @@ function settingsToggleDiv() {
 
     saveButton.addEventListener("click", () => {
         setConfig("enabledfeatures", settings);
+        savedNotification();
     });
 
     div.appendChild(settingsContainerDiv);
@@ -197,6 +198,7 @@ function createTinyAliasDiv() {
             aliases[aliasName] = aliasContent;
         }
         setConfig("tinyalias", aliases);
+        //no need to reload, changes will be picked up
         Danbooru.notice("TinyAlias saved");
     });
 
@@ -236,6 +238,7 @@ function settingsQuickLinks() {
             newQuickLinks.push(quickLink);
         }
         setConfig("quicklinks", newQuickLinks);
+        savedNotification();
     });
 
     div.appendChild(saveButton);

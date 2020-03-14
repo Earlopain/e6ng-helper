@@ -187,3 +187,7 @@ function prepareInput(input) {
 function prepareTagInput(input) {
     return input.trim().toLowerCase().replace(/ /g, "_");
 }
+
+function savedNotification() {
+    Danbooru.notice("Successfully saved. Reload to see changes");
+}
