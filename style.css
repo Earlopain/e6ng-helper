@@ -1,4 +1,4 @@
-.invisible {
+.e6ng-invisible {
     display: none !important;
 }
 
@@ -85,7 +85,7 @@
     color: #2e76b4;
 }
 
-.settings-alias-container {
+.e6ng-settings-alias-container {
     padding-right: 10px;
     padding-bottom: 5px;
     width: 30%;
@@ -95,38 +95,41 @@
     float: left;
 }
 
-.settings-alias-container textarea {
+.e6ng-settings-alias-container textarea {
     width: 100%;
     height: 100%;
 }
 
-.settings-alias-name {
+.e6ng-settings-alias-name {
     text-align: center;
 }
 
-.dtext-format-button {
+.e6ng-dtext-format-button {
     width: 60px !important;
     height: 100% !important;
     margin-right: 5px !important;
     margin-bottom: 5px !important;
 }
 
-.dtext-format-button:hover {
+.e6ng-dtext-format-button:hover {
     background-color: rgb(34, 65, 115) !important;
 }
 
-.small-margin {
+.e6ng-small-margin {
     margin: 5px 5px 5px 5px;
 }
 
-.small-padding {
+.e6ng-small-padding {
     padding: 5px 5px 5px 5px;
 }
 
-.tag-status-div {
+.e6ng-tag-status-div {
     margin-top: 5px;
     height: 8px;
 }
+
+/* Modifications to the original theme */
+
 div#c-posts div.bottom-notices {
     display: block;
 }

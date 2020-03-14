@@ -212,7 +212,7 @@ function insertDtextFormatting() {
         const buttonDiv = document.createElement("div");
         const previewButton = preview.closest("form").querySelector(".dtext-preview-button");
         previewButton.addEventListener("click", () => {
-            buttonDiv.classList.toggle("invisible");
+            buttonDiv.classList.toggle("e6ng-invisible");
         });
         for (let i = 0; i < buttons.length; i++) {
             if (i % buttonsPerRow === 0 && i !== 0) {
@@ -220,7 +220,7 @@ function insertDtextFormatting() {
             }
             const button = buttons[i];
             const buttonElement = document.createElement("div");
-            buttonElement.classList.add("dtext-format-button");
+            buttonElement.classList.add("e6ng-dtext-format-button");
             const buttonText = document.createElement(button.element);
             buttonText.innerText = button.text;
             buttonElement.appendChild(buttonText);
@@ -251,13 +251,13 @@ function enhancePostUploader() {
     const divContainer = document.createElement("div");
 
     const tagInput = document.createElement("input");
-    tagInput.classList.add("small-margin");
+    tagInput.classList.add("e6ng-small-margin");
     tagInput.spellcheck = false;
     const tagCheckButton = document.createElement("button");
     const tagInsertButton = document.createElement("button");
     const sortTagsButton = document.createElement("button");
     const infoText = document.createElement("div");
-    infoText.classList.add("tag-status-div");
+    infoText.classList.add("e6ng-tag-status-div");
 
     let tagAlreadyChecked = false;
 
@@ -277,7 +277,7 @@ function enhancePostUploader() {
     })
 
     tagCheckButton.innerText = "Check";
-    tagCheckButton.classList.add("small-margin");
+    tagCheckButton.classList.add("e6ng-small-margin");
     tagCheckButton.addEventListener("click", async () => {
         if (insertTinyAlias(tagInput, textarea)) {
             return;
@@ -307,7 +307,7 @@ function enhancePostUploader() {
     });
 
     tagInsertButton.innerText = "Insert";
-    tagInsertButton.classList.add("small-margin");
+    tagInsertButton.classList.add("e6ng-small-margin");
 
     tagInsertButton.addEventListener("click", () => {
         if (insertTinyAlias(tagInput, textarea)) {
@@ -323,7 +323,7 @@ function enhancePostUploader() {
     });
 
     sortTagsButton.innerText = "Sort";
-    sortTagsButton.classList.add("small-margin");
+    sortTagsButton.classList.add("e6ng-small-margin");
 
     sortTagsButton.addEventListener("click", () => {
         const currentText = prepareInput(textarea.value);
@@ -335,7 +335,7 @@ function enhancePostUploader() {
     });
 
     const tinyAliasButton = document.createElement("button");
-    tinyAliasButton.classList.add("small-margin");
+    tinyAliasButton.classList.add("e6ng-small-margin");
     tinyAliasButton.innerText = "TinyAlias";
     tinyAliasButton.addEventListener("click", () => openSettingsTab("enhancePostUploader"));
 
@@ -433,7 +433,7 @@ function modifyBlacklist() {
     //becuase a.click also results in changing the setting
     let allowSetSettings = false;
     a.addEventListener("click", () => {
-        blaclistList.classList.toggle("invisible");
+        blaclistList.classList.toggle("e6ng-invisible");
         let currentStatus = getConfig("hideblacklist", false);
         if (allowSetSettings) {
             currentStatus = setConfig("hideblacklist", !currentStatus);

@@ -12,7 +12,7 @@ function addSettingsMenu() {
 
     const settingsDiv = document.createElement("div");
     settingsDiv.id = "e6ng-settings";
-    settingsDiv.classList.add("invisible");
+    settingsDiv.classList.add("e6ng-invisible");
     const settingsDivDraggable = document.createElement("div");
     settingsDivDraggable.id = "e6ng-settings-dragable";
     settingsDivDraggable.innerText = "E6NG Helper Settings";
@@ -21,14 +21,14 @@ function addSettingsMenu() {
     settingsCloseButton.id = "e6ng-settings-close";
     settingsCloseButton.innerHTML = "\u274C";
     settingsCloseButton.addEventListener("click", () => {
-        settingsDiv.classList.add("invisible");
+        settingsDiv.classList.add("e6ng-invisible");
     });
 
     settingsDivDraggable.appendChild(settingsCloseButton);
 
     const settingsDivContent = document.createElement("div");
     settingsDivContent.id = "e6ng-settings-content";
-    settingsDivContent.classList.add("small-margin");
+    settingsDivContent.classList.add("e6ng-small-margin");
 
     const settingsTabbar = document.createElement("div");
     settingsTabbar.id = "e6ng-settings-tabbar";
@@ -43,17 +43,17 @@ function addSettingsMenu() {
         tabSelector.id = "e6ng-settings-tab-" + featureName;
         tabSelector.innerText = feature.title;
         tabSelector.classList.add("e6ng-settings-tab");
-        tabSelector.classList.add("small-padding");
+        tabSelector.classList.add("e6ng-small-padding");
 
         tabSelector.addEventListener("click", () => {
             for (const element of document.querySelectorAll(".e6ng-tab-content")) {
-                element.classList.add("invisible");
+                element.classList.add("e6ng-invisible");
             }
             for (const element of document.querySelectorAll(".e6ng-settings-tab-selected")) {
                 element.classList.remove("e6ng-settings-tab-selected");
             }
             tabSelector.classList.add("e6ng-settings-tab-selected");
-            document.getElementById("e6ng-tab-content-" + featureName).classList.remove("invisible");
+            document.getElementById("e6ng-tab-content-" + featureName).classList.remove("e6ng-invisible");
         });
         settingsTabbar.appendChild(tabSelector);
         settingsDivContent.appendChild(tabDiv);
@@ -127,14 +127,14 @@ function createTinyAliasDiv() {
 
     const aliasValueInput = document.createElement("textarea");
     aliasValueInput.id = "e6ng-settings-alias-valueinput";
-    aliasValueInput.classList.add("small-margin");
+    aliasValueInput.classList.add("e6ng-small-margin");
 
     createAliasDiv.appendChild(aliasValueInput);
 
     const aliasCreateButton = document.createElement("button");
     aliasCreateButton.innerText = "Create";
-    aliasCreateButton.classList.add("small-margin");
-    aliasCreateButton.classList.add("small-padding");
+    aliasCreateButton.classList.add("e6ng-small-margin");
+    aliasCreateButton.classList.add("e6ng-small-padding");
     aliasCreateButton.addEventListener("click", () => {
         const aliasName = aliasNameInput.value.toLowerCase();
         const aliasContent = aliasValueInput.value.toLowerCase();
@@ -157,9 +157,9 @@ function createTinyAliasDiv() {
     allAliasesDiv.id = "e6ng-settings-all-aliases";
     for (const aliasName of Object.keys(allAliases)) {
         const aliasDiv = document.createElement("div");
-        aliasDiv.classList.add("settings-alias-container");
+        aliasDiv.classList.add("e6ng-settings-alias-container");
         const nameContainer = document.createElement("div");
-        nameContainer.classList.add("settings-alias-name");
+        nameContainer.classList.add("e6ng-settings-alias-name");
         nameContainer.innerText = aliasName;
         const deleteAlias = document.createElement("a");
         deleteAlias.href = "#";
@@ -185,7 +185,7 @@ function createTinyAliasDiv() {
     saveButton.addEventListener("click", () => {
         const aliases = {};
         for (const alias of allAliasesDiv.children) {
-            const aliasName = alias.querySelector(".settings-alias-name").childNodes[0].textContent;
+            const aliasName = alias.querySelector(".e6ng-settings-alias-name").childNodes[0].textContent;
             const aliasContent = alias.querySelector("textarea").value;
             aliases[aliasName] = aliasContent;
         }
@@ -198,7 +198,7 @@ function createTinyAliasDiv() {
 }
 
 function openSettingsTab(featureName) {
-    document.getElementById("e6ng-settings").classList.remove("invisible");
+    document.getElementById("e6ng-settings").classList.remove("e6ng-invisible");
     document.getElementById("e6ng-settings-tab-" + featureName).click();
 }
 
