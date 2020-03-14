@@ -49,6 +49,11 @@ const features = {
         divFunction: createTinyAliasDiv,
         description: "Adds TinyAlias to the post uploder. Also adds the ability to check if a tag is valid or not"
     },
+    "addQuickLinks": {
+        title: "QuickAccess",
+        divFunction: settingsQuickLinks,
+        description: "Put custom links into the quick access bar, see settings tab for more",
+    },
     "quickAddToBlacklist": {
         needsLoggedIn: true,
         description: "Adds a (x) before tags so you can quickly add/remove them from your blacklist"
@@ -63,6 +68,17 @@ const features = {
         description: "Adds dtext formatting buttons. Select some text to enclose it"
     }
 };
+
+const defaultQuickAccess = [
+    { title: "?", action: "link", hint: "Your userpage", content: "https://e621.net/users/$userid" },
+    { title: "M", action: "link", hint: "Your Dmails", content: "https://e621.net/dmails" },
+    { title: "S", action: "js", hint: "Your Subscriptions", content: "openSettingsTab('subscriptions')" },
+    { title: "|", action: "none", hint: "", content: "" },
+    { title: "U", action: "link", hint: "Upload a Post", content: "https://e621.net/uploads/new" },
+    { title: "D", action: "link", hint: "DNP List", content: "https://e621.net/help/avoid_posting" },
+    { title: "S", action: "link", hint: "Edit user settings", content: "https://e621.net/users/$userid/edit" },
+    { title: "L", action: "link", hint: "Logout", content: "https://e621.net/session/sign_out" }
+];
 
 (function () {
     'use strict';
@@ -131,7 +147,7 @@ function quickAddToBlacklist() {
     const tags = document.querySelectorAll(".search-tag");
     for (const tag of tags) {
         const li = tag.closest("li");
-        const a = createSpeudoLinkElement();
+        const a = createPseudoLinkElement();
         a.innerText = "x ";
         a.addEventListener("click", () => {
             toggleBlacklistTag(tag.innerText.replace(/ /g, "_"));
@@ -429,7 +445,7 @@ function modifyBlacklist() {
     }
     const divContainer = document.createElement("div");
     divContainer.style.paddingBottom = "5px";
-    const a = createSpeudoLinkElement();
+    const a = createPseudoLinkElement();
     a.innerHTML = "Click to " + getText(getConfig("hideblacklist", false));
     //only modify setting after hiding blacklist initially
     //becuase a.click also results in changing the setting
@@ -470,4 +486,49 @@ function addExtraShortcuts() {
             }
         }
     });
+}
+
+function addQuickLinks() {
+
+    const links = defaultQuickAccess;
+
+    const extraLinksDiv = document.createElement("div");
+
+    for (const link of links) {
+        let element;
+        switch (link.action) {
+            case "link":
+                element = document.createElement("a");
+                element.innerText = link.title;
+                element.href = prepareLink(link.content);
+                break;
+            case "js":
+                element = createPseudoLinkElement();
+                element.addEventListener("click", () => {
+                    eval(link.action());
+                });
+                break;
+            case "none":
+                element = document.createElement("div");
+                element.innerText = link.title;
+                break;
+            default:
+                Danbooru.error("E6NG: Unknown action " + link.action);
+                throw new Error("Unknown action " + link.action);
+        }
+        element.title = link.hint;
+        element.classList.add("e6ng-extra-quicklinks");
+        element.classList.add("e6ng-inline");
+        extraLinksDiv.appendChild(element);
+    }
+
+    extraLinksDiv.classList.add("e6ng-float-right");
+    extraLinksDiv.classList.add("e6ng-small-padding");
+
+    const navBar = document.getElementById("nav");
+    navBar.insertBefore(extraLinksDiv, navBar.lastElementChild);
+
+    function prepareLink(link) {
+        return link.replace(/\$userid/g, getUserid());
+    }
 }

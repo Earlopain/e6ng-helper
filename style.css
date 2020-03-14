@@ -128,12 +128,20 @@
     height: 8px;
 }
 
-#nav-e6ng-helper-link {
+.e6ng-extra-menuentry {
     padding: 0px 10px;
+}
+
+.e6ng-extra-quicklinks {
+    padding: 0px 4px;
 }
 
 .e6ng-inline {
     display: inline;
+}
+
+.e6ng-float-right {
+    float: right;
 }
 
 /* Modifications to the original theme */

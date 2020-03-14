@@ -174,7 +174,7 @@ function saveSettings(settings) {
     localStorage.setItem("e6nghelper", JSON.stringify(settings));
 }
 
-function createSpeudoLinkElement() {
+function createPseudoLinkElement() {
     const div = document.createElement("div");
     div.classList.add("e6ng-link");
     return div;

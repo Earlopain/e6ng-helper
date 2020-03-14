@@ -3,8 +3,9 @@ function addSettingsMenu() {
     const li = document.createElement("li");
     li.id = "nav-e6ng-helper";
 
-    const a = createSpeudoLinkElement();
+    const a = createPseudoLinkElement();
     a.id = "nav-e6ng-helper-link";
+    a.classList.add("e6ng-extra-menuentry");
     a.innerText = "E6NG";
     a.addEventListener("click", () => {
         openSettingsTab("addSettingsMenu");
@@ -199,6 +200,11 @@ function createTinyAliasDiv() {
     });
 
     div.appendChild(saveButton);
+    return div;
+}
+
+function settingsQuickLinks() {
+    const div = document.createElement("div");
     return div;
 }
 
