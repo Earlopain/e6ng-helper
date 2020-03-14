@@ -71,10 +71,10 @@ const features = {
 };
 
 const defaultQuickAccess = [
-    { title: "?", type: "link", hint: "Your userpage", content: "https://e621.net/users/$userid" },
+    { title: "?", type: "link", hint: "Your Userpage", content: "https://e621.net/users/$userid" },
     { title: "M", type: "link", hint: "Your Dmails", content: "https://e621.net/dmails" },
     { title: "S", type: "js", hint: "Your Subscriptions", content: "openSettingsTab('subscriptions')" },
-    { title: "|", type: "none", hint: "", content: "" },
+    { title: "|", type: "none", hint: "Seperator", content: "" },
     { title: "U", type: "link", hint: "Upload a Post", content: "https://e621.net/uploads/new" },
     { title: "D", type: "link", hint: "DNP List", content: "https://e621.net/help/avoid_posting" },
     { title: "S", type: "link", hint: "Edit user settings", content: "https://e621.net/users/$userid/edit" },
