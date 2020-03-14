@@ -87,21 +87,26 @@ function settingsToggleDiv() {
         }
         const featureExplanationDiv = document.createElement("div");
         featureExplanationDiv.innerText = features[featureSettingName].description;
+        featureExplanationDiv.classList.add("e6ng-inline");
+
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = settings[featureSettingName] !== false;
+        checkbox.classList.add("e6ng-inline");
+        checkbox.classList.add("e6ng-small-margin");
 
         checkbox.addEventListener("click", () => {
             settings[featureSettingName] = checkbox.checked;
         });
 
-        settingsDiv.appendChild(featureExplanationDiv);
         settingsDiv.appendChild(checkbox);
+        settingsDiv.appendChild(featureExplanationDiv);
         settingsContainerDiv.appendChild(settingsDiv);
     }
 
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";
+    saveButton.classList.add("e6ng-small-margin");
 
     saveButton.addEventListener("click", () => {
         setConfig("enabledfeatures", settings);

@@ -132,6 +132,10 @@
     padding: 0px 10px;
 }
 
+.e6ng-inline {
+    display: inline;
+}
+
 /* Modifications to the original theme */
 
 div#c-posts div.bottom-notices {
