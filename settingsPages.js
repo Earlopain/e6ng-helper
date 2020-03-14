@@ -152,7 +152,7 @@ function createTinyAliasDiv() {
         currentAliases[aliasName] = aliasContent;
         setConfig("tinyalias", currentAliases);
         Danbooru.notice("Added TinyAlias");
-        redrawSettingsTab("tinyalias");
+        redrawSettingsTab("enhancePostUploader");
     });
 
     createAliasDiv.appendChild(aliasCreateButton);
