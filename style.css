@@ -104,6 +104,11 @@
     text-align: center;
 }
 
+
+.e6ng-quicklinks-titleinput {
+    width: 25px;
+}
+
 .e6ng-dtext-format-button {
     width: 60px !important;
     height: 100% !important;

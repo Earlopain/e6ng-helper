@@ -223,7 +223,7 @@ function settingsQuickLinks() {
         titleInput.value = quickAccess.title;
         quickAccessContainer.appendChild(titleInput);
 
-        quickAccessContainer.appendChild(document.createTextNode("URL: "));
+        quickAccessContainer.appendChild(document.createTextNode(" URL: "));
 
         const urlInput = document.createElement("input");
         urlInput.classList.add("e6ng-quicklinks-urlinput");
@@ -233,9 +233,18 @@ function settingsQuickLinks() {
         const moveUpButton = document.createElement("button");
         moveUpButton.innerText = "Up";
         moveUpButton.classList.add("e6ng-small-margin");
+
+        moveUpButton.addEventListener("click", () => {
+            swapElements(quickAccessContainer, quickAccessContainer.previousElementSibling);
+        });
+
         const moveDownButton = document.createElement("button");
         moveDownButton.innerText = "Down";
         moveDownButton.classList.add("e6ng-small-margin");
+
+        moveDownButton.addEventListener("click", () => {
+            swapElements(quickAccessContainer, quickAccessContainer.nextElementSibling);
+        });
 
         quickAccessContainer.appendChild(moveUpButton);
         quickAccessContainer.appendChild(moveDownButton);
