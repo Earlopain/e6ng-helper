@@ -208,30 +208,14 @@ function settingsQuickLinks() {
     const div = document.createElement("div");
 
     const explainationDiv = document.createElement("div");
-    explainationDiv.innerText = "Here you can configure which links will be displayed in the top right of the page";
+    explainationDiv.innerHTML = "Here you can configure which links will be displayed in the top right of the page<br>To reorder simple drag the elements around";
     div.appendChild(explainationDiv);
 
     const container = document.createElement("div");
     container.classList.add("e6ng-small-padding");
 
     for (const quickAccess of getConfig("quickaccess", defaultQuickAccess)) {
-        const quickAccessContainer = document.createElement("div");
-        quickAccessContainer.classList.add("e6ng-small-padding");
-        quickAccessContainer.appendChild(document.createTextNode("Title: "));
-
-        const titleInput = document.createElement("input");
-        titleInput.classList.add("e6ng-quicklinks-titleinput");
-        titleInput.value = quickAccess.title;
-        quickAccessContainer.appendChild(titleInput);
-
-        quickAccessContainer.appendChild(document.createTextNode(" URL: "));
-
-        const urlInput = document.createElement("input");
-        urlInput.classList.add("e6ng-quicklinks-urlinput");
-        urlInput.value = quickAccess.content;
-        quickAccessContainer.appendChild(urlInput);
-
-        container.appendChild(quickAccessContainer);
+        container.appendChild(createQuickLinkElement(quickAccess));
     }
     div.appendChild(container);
 
@@ -242,6 +226,26 @@ function settingsQuickLinks() {
     div.appendChild(saveButton);
 
     return div;
+
+    function createQuickLinkElement(definition) {
+        const quickAccessContainer = document.createElement("div");
+        quickAccessContainer.classList.add("e6ng-small-padding");
+        quickAccessContainer.style.display = "table";
+        quickAccessContainer.appendChild(document.createTextNode("Title: "));
+
+        const titleInput = document.createElement("input");
+        titleInput.classList.add("e6ng-quicklinks-titleinput");
+        titleInput.value = definition.title;
+        quickAccessContainer.appendChild(titleInput);
+
+        quickAccessContainer.appendChild(document.createTextNode(" URL: "));
+
+        const urlInput = document.createElement("input");
+        urlInput.classList.add("e6ng-quicklinks-urlinput");
+        urlInput.value = definition.content;
+        quickAccessContainer.appendChild(urlInput);
+        return quickAccessContainer;
+    }
 }
 
 function openSettingsTab(featureName) {
