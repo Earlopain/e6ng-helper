@@ -15,6 +15,7 @@
 // @resource     style style.css
 // @require      util.js?v=1
 // @require      settingsPages.js?v=1
+// @require      https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js
 // ==/UserScript==
 
 const NETWORK_ERROR = -1;

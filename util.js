@@ -187,13 +187,3 @@ function prepareInput(input) {
 function prepareTagInput(input) {
     return input.trim().toLowerCase().replace(/ /g, "_");
 }
-
-//https://stackoverflow.com/a/18531086
-function swapElements(e1, e2) {
-    if (e2 === null || e1 === null) {
-        return;
-    }
-    e2.nextSibling === e1
-        ? e1.parentNode.insertBefore(e2, e1.nextSibling)
-        : e1.parentNode.insertBefore(e2, e1);
-}

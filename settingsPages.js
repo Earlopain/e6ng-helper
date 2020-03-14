@@ -184,6 +184,7 @@ function createTinyAliasDiv() {
         allAliasesDiv.appendChild(aliasDiv)
     }
     div.appendChild(allAliasesDiv);
+    new Sortable(allAliasesDiv, { animation: 150 });
 
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";
@@ -230,27 +231,11 @@ function settingsQuickLinks() {
         urlInput.value = quickAccess.content;
         quickAccessContainer.appendChild(urlInput);
 
-        const moveUpButton = document.createElement("button");
-        moveUpButton.innerText = "Up";
-        moveUpButton.classList.add("e6ng-small-margin");
-
-        moveUpButton.addEventListener("click", () => {
-            swapElements(quickAccessContainer, quickAccessContainer.previousElementSibling);
-        });
-
-        const moveDownButton = document.createElement("button");
-        moveDownButton.innerText = "Down";
-        moveDownButton.classList.add("e6ng-small-margin");
-
-        moveDownButton.addEventListener("click", () => {
-            swapElements(quickAccessContainer, quickAccessContainer.nextElementSibling);
-        });
-
-        quickAccessContainer.appendChild(moveUpButton);
-        quickAccessContainer.appendChild(moveDownButton);
         container.appendChild(quickAccessContainer);
     }
     div.appendChild(container);
+
+    new Sortable(container, { animation: 150 });
 
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";
