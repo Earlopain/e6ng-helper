@@ -94,6 +94,8 @@ function setTitle() {
     }
     if (document.querySelector("#post-vote-up-" + document.location.href.split("/").pop().split("?")[0]).classList.contains("score-positive")) {
         prefix += "\u2191 "; //arrow up
+    } else if (document.querySelector("#post-vote-down-" + document.location.href.split("/").pop().split("?")[0]).classList.contains("score-negative")) {
+        prefix += "\u2193 "; //arrow down
     }
     document.title = prefix + oldTitle;
 }
