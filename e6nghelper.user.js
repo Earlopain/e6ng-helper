@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         E6NG Helper
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Remake of the now defunct eSix Extend
 // @author       Earlopain
 // @homepage     https://e621.net/forum_topics/25872
@@ -12,9 +12,9 @@
 // @exclude      *.json
 // @grant        GM.getResourceUrl
 // @grant        GM_getResourceText
-// @resource     style style.css
-// @require      util.js?v=1
-// @require      settingsPages.js?v=1
+// @resource     style style.css?v=2
+// @require      util.js?v=2
+// @require      settingsPages.js?v=2
 // @require      https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js
 // ==/UserScript==
 
