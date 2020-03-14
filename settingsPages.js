@@ -229,9 +229,9 @@ function settingsQuickLinks() {
         for (const element of document.querySelectorAll(".e6ng-quicklinks-container")) {
             const quickLink = {
                 title: element.querySelector(".e6ng-quicklinks-titleinput").value,
-                type: element.querySelector(".e6ng-quicklinks-urlinput").value,
+                type: element.querySelector(".e6ng-quicklinks-typeinput").value,
                 hint: element.querySelector(".e6ng-quicklinks-hintinput").value,
-                content: element.querySelector(".e6ng-quicklinks-typeinput").value
+                content: element.querySelector(".e6ng-quicklinks-contentinput").value
             }
             newQuickLinks.push(quickLink);
         }
@@ -240,6 +240,13 @@ function settingsQuickLinks() {
 
     div.appendChild(saveButton);
 
+    const addButton = document.createElement("button");
+    addButton.classList.add("e6ng-small-margin");
+    addButton.innerText = "Add entry";
+    addButton.addEventListener("click", () => {
+        container.appendChild(createQuickLinkElement({ title: "", type: "link", hint: "", content: "" }));
+    });
+    div.appendChild(addButton);
     return div;
 
     function createQuickLinkElement(definition) {
@@ -256,10 +263,10 @@ function settingsQuickLinks() {
 
 
         quickAccessContainer.appendChild(document.createTextNode(" URL: "));
-        const urlInput = document.createElement("input");
-        urlInput.classList.add("e6ng-quicklinks-urlinput");
-        urlInput.value = definition.content;
-        quickAccessContainer.appendChild(urlInput);
+        const contentInput = document.createElement("input");
+        contentInput.classList.add("e6ng-quicklinks-contentinput");
+        contentInput.value = definition.content;
+        quickAccessContainer.appendChild(contentInput);
 
         quickAccessContainer.appendChild(document.createTextNode(" Hint: "));
         const hintInput = document.createElement("input");
