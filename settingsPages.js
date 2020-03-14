@@ -295,6 +295,14 @@ function settingsQuickLinks() {
         typeInput.value = definition.type;
         quickAccessContainer.appendChild(typeInput);
 
+        const buttonRemove = document.createElement("button");
+        buttonRemove.style.marginLeft = "5px";
+        buttonRemove.innerText = "Remove";
+        buttonRemove.addEventListener("click", () => {
+            quickAccessContainer.remove();
+        });
+        quickAccessContainer.appendChild(buttonRemove);
+
         return quickAccessContainer;
     }
 }
