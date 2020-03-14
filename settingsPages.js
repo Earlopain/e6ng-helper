@@ -223,6 +223,13 @@ function settingsQuickLinks() {
 
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";
+
+    saveButton.addEventListener("click", () => {
+        for (const element of object) {
+
+        }
+    });
+
     div.appendChild(saveButton);
 
     return div;
@@ -231,19 +238,32 @@ function settingsQuickLinks() {
         const quickAccessContainer = document.createElement("div");
         quickAccessContainer.classList.add("e6ng-small-padding");
         quickAccessContainer.style.display = "table";
-        quickAccessContainer.appendChild(document.createTextNode("Title: "));
 
+        quickAccessContainer.appendChild(document.createTextNode("Title: "));
         const titleInput = document.createElement("input");
         titleInput.classList.add("e6ng-quicklinks-titleinput");
         titleInput.value = definition.title;
         quickAccessContainer.appendChild(titleInput);
 
-        quickAccessContainer.appendChild(document.createTextNode(" URL: "));
 
+        quickAccessContainer.appendChild(document.createTextNode(" URL: "));
         const urlInput = document.createElement("input");
         urlInput.classList.add("e6ng-quicklinks-urlinput");
         urlInput.value = definition.content;
         quickAccessContainer.appendChild(urlInput);
+
+        quickAccessContainer.appendChild(document.createTextNode(" Hint: "));
+        const hintInput = document.createElement("input");
+        hintInput.classList.add("e6ng-quicklinks-hintinput");
+        hintInput.value = definition.hint;
+        quickAccessContainer.appendChild(hintInput);
+
+        const typeInput = document.createElement("input");
+        typeInput.classList.add("e6ng-quicklinks-hintinput");
+        typeInput.classList.add("e6ng-invisible");
+        typeInput.value = definition.type;
+        quickAccessContainer.appendChild(typeInput);
+
         return quickAccessContainer;
     }
 }

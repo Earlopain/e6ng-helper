@@ -71,14 +71,14 @@ const features = {
 };
 
 const defaultQuickAccess = [
-    { title: "?", action: "link", hint: "Your userpage", content: "https://e621.net/users/$userid" },
-    { title: "M", action: "link", hint: "Your Dmails", content: "https://e621.net/dmails" },
-    { title: "S", action: "js", hint: "Your Subscriptions", content: "openSettingsTab('subscriptions')" },
-    { title: "|", action: "none", hint: "", content: "" },
-    { title: "U", action: "link", hint: "Upload a Post", content: "https://e621.net/uploads/new" },
-    { title: "D", action: "link", hint: "DNP List", content: "https://e621.net/help/avoid_posting" },
-    { title: "S", action: "link", hint: "Edit user settings", content: "https://e621.net/users/$userid/edit" },
-    { title: "L", action: "link", hint: "Logout", content: "https://e621.net/session/sign_out" }
+    { title: "?", type: "link", hint: "Your userpage", content: "https://e621.net/users/$userid" },
+    { title: "M", type: "link", hint: "Your Dmails", content: "https://e621.net/dmails" },
+    { title: "S", type: "js", hint: "Your Subscriptions", content: "openSettingsTab('subscriptions')" },
+    { title: "|", type: "none", hint: "", content: "" },
+    { title: "U", type: "link", hint: "Upload a Post", content: "https://e621.net/uploads/new" },
+    { title: "D", type: "link", hint: "DNP List", content: "https://e621.net/help/avoid_posting" },
+    { title: "S", type: "link", hint: "Edit user settings", content: "https://e621.net/users/$userid/edit" },
+    { title: "L", type: "link", hint: "Logout", content: "https://e621.net/session/sign_out" }
 ];
 
 (function () {
@@ -497,7 +497,7 @@ function addQuickLinks() {
 
     for (const link of getConfig("quickaccess", defaultQuickAccess)) {
         let element;
-        switch (link.action) {
+        switch (link.type) {
             case "link":
                 element = document.createElement("a");
                 element.innerText = link.title;
@@ -506,7 +506,7 @@ function addQuickLinks() {
             case "js":
                 element = createPseudoLinkElement();
                 element.addEventListener("click", () => {
-                    eval(link.action());
+                    eval(link.content);
                 });
                 break;
             case "none":
@@ -514,8 +514,8 @@ function addQuickLinks() {
                 element.innerText = link.title;
                 break;
             default:
-                Danbooru.error("E6NG: Unknown action " + link.action);
-                throw new Error("Unknown action " + link.action);
+                Danbooru.error("E6NG: Unknown action " + link.type);
+                throw new Error("Unknown action " + link.type);
         }
         element.title = link.hint;
         element.classList.add("e6ng-extra-quicklinks");
