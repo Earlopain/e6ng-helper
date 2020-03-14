@@ -492,7 +492,7 @@ function addQuickLinks() {
 
     const links = defaultQuickAccess;
 
-    const extraLinksDiv = document.createElement("div");
+    const extraLinksDiv = getConfig("quickaccess", defaultQuickAccess);
 
     for (const link of links) {
         let element;

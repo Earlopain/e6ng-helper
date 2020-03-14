@@ -205,6 +205,48 @@ function createTinyAliasDiv() {
 
 function settingsQuickLinks() {
     const div = document.createElement("div");
+
+    const explainationDiv = document.createElement("div");
+    explainationDiv.innerText = "Here you can configure which links will be displayed in the top right of the page";
+    div.appendChild(explainationDiv);
+
+    const container = document.createElement("div");
+    container.classList.add("e6ng-small-padding");
+
+    for (const quickAccess of getConfig("quickaccess", defaultQuickAccess)) {
+        const quickAccessContainer = document.createElement("div");
+        quickAccessContainer.classList.add("e6ng-small-padding");
+        quickAccessContainer.appendChild(document.createTextNode("Title: "));
+
+        const titleInput = document.createElement("input");
+        titleInput.classList.add("e6ng-quicklinks-titleinput");
+        titleInput.value = quickAccess.title;
+        quickAccessContainer.appendChild(titleInput);
+
+        quickAccessContainer.appendChild(document.createTextNode("URL: "));
+
+        const urlInput = document.createElement("input");
+        urlInput.classList.add("e6ng-quicklinks-urlinput");
+        urlInput.value = quickAccess.content;
+        quickAccessContainer.appendChild(urlInput);
+
+        const moveUpButton = document.createElement("button");
+        moveUpButton.innerText = "Up";
+        moveUpButton.classList.add("e6ng-small-margin");
+        const moveDownButton = document.createElement("button");
+        moveDownButton.innerText = "Down";
+        moveDownButton.classList.add("e6ng-small-margin");
+
+        quickAccessContainer.appendChild(moveUpButton);
+        quickAccessContainer.appendChild(moveDownButton);
+        container.appendChild(quickAccessContainer);
+    }
+    div.appendChild(container);
+
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Save";
+    div.appendChild(saveButton);
+
     return div;
 }
 
