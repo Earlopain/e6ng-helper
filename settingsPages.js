@@ -240,13 +240,28 @@ function settingsQuickLinks() {
 
     div.appendChild(saveButton);
 
+    const addSelector = document.createElement("select");
     const addButton = document.createElement("button");
     addButton.classList.add("e6ng-small-margin");
     addButton.innerText = "Add entry";
     addButton.addEventListener("click", () => {
-        container.appendChild(createQuickLinkElement({ title: "", type: "link", hint: "", content: "" }));
+        container.appendChild(createQuickLinkElement(JSON.parse(addSelector.value)));
     });
+
+    const customOption = document.createElement("option");
+    customOption.value = JSON.stringify({ title: "", type: "link", hint: "", content: "" });
+    customOption.innerText = "Custom";
+    addSelector.appendChild(customOption);
+
+    for (const link of defaultQuickAccess) {
+        const option = document.createElement("option");
+        option.value = JSON.stringify(link);
+        option.innerText = link.hint;
+        addSelector.appendChild(option)
+    }
+
     div.appendChild(addButton);
+    div.appendChild(addSelector);
     return div;
 
     function createQuickLinkElement(definition) {
