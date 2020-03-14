@@ -491,11 +491,10 @@ function addExtraShortcuts() {
 
 function addQuickLinks() {
 
-    const links = defaultQuickAccess;
-
+    const links = getConfig("quicklinks", defaultQuickAccess);
     const extraLinksDiv = document.createElement("div");
 
-    for (const link of getConfig("quickaccess", defaultQuickAccess)) {
+    for (const link of links) {
         let element;
         switch (link.type) {
             case "link":

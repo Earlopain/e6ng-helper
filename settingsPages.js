@@ -214,7 +214,7 @@ function settingsQuickLinks() {
     const container = document.createElement("div");
     container.classList.add("e6ng-small-padding");
 
-    for (const quickAccess of getConfig("quickaccess", defaultQuickAccess)) {
+    for (const quickAccess of getConfig("quicklinks", defaultQuickAccess)) {
         container.appendChild(createQuickLinkElement(quickAccess));
     }
     div.appendChild(container);
@@ -225,9 +225,17 @@ function settingsQuickLinks() {
     saveButton.innerText = "Save";
 
     saveButton.addEventListener("click", () => {
-        for (const element of object) {
-
+        const newQuickLinks = [];
+        for (const element of document.querySelectorAll(".e6ng-quicklinks-container")) {
+            const quickLink = {
+                title: element.querySelector(".e6ng-quicklinks-titleinput").value,
+                type: element.querySelector(".e6ng-quicklinks-urlinput").value,
+                hint: element.querySelector(".e6ng-quicklinks-hintinput").value,
+                content: element.querySelector(".e6ng-quicklinks-typeinput").value
+            }
+            newQuickLinks.push(quickLink);
         }
+        setConfig("quicklinks", newQuickLinks);
     });
 
     div.appendChild(saveButton);
@@ -237,6 +245,7 @@ function settingsQuickLinks() {
     function createQuickLinkElement(definition) {
         const quickAccessContainer = document.createElement("div");
         quickAccessContainer.classList.add("e6ng-small-padding");
+        quickAccessContainer.classList.add("e6ng-quicklinks-container");
         quickAccessContainer.style.display = "table";
 
         quickAccessContainer.appendChild(document.createTextNode("Title: "));
@@ -259,7 +268,7 @@ function settingsQuickLinks() {
         quickAccessContainer.appendChild(hintInput);
 
         const typeInput = document.createElement("input");
-        typeInput.classList.add("e6ng-quicklinks-hintinput");
+        typeInput.classList.add("e6ng-quicklinks-typeinput");
         typeInput.classList.add("e6ng-invisible");
         typeInput.value = definition.type;
         quickAccessContainer.appendChild(typeInput);
