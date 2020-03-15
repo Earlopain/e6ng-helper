@@ -442,6 +442,27 @@ function settingsShortcuts() {
 
     createSortable(container);
 
+    const addSelector = document.createElement("select");
+    const addButton = document.createElement("button");
+    addButton.classList.add("e6ng-small-margin");
+    addButton.innerText = "Add entry";
+    addButton.addEventListener("click", () => {
+        container.appendChild(createShortcutElement(addSelector.options[addSelector.selectedIndex].getAttribute("data-name"), JSON.parse(addSelector.value)));
+    });
+
+    for (const name of Object.keys(defaultKeyboardShortcuts)) {
+        const shortcut = defaultKeyboardShortcuts[name];
+        const option = document.createElement("option");
+        option.value = JSON.stringify(shortcut);
+        option.setAttribute("data-name", name);
+        option.innerText = shortcut.description;
+        addSelector.appendChild(option)
+    }
+
+    div.appendChild(addButton);
+    div.appendChild(addSelector);
+
+
     return div;
 
     function createShortcutElement(key, definition) {
@@ -464,11 +485,11 @@ function settingsShortcuts() {
 
 
         shortcutContainer.appendChild(document.createTextNode(" Description: "));
-        const contentInput = document.createElement("input");
-        contentInput.classList.add("e6ng-shortcut-descriptioninput");
-        contentInput.value = definition.description;
-        contentInput.disabled = true;
-        shortcutContainer.appendChild(contentInput);
+        const descriptionInput = document.createElement("input");
+        descriptionInput.classList.add("e6ng-shortcut-descriptioninput");
+        descriptionInput.value = definition.description;
+        descriptionInput.disabled = true;
+        shortcutContainer.appendChild(descriptionInput);
 
         const locationInput = document.createElement("input");
         locationInput.classList.add("e6ng-shortcut-locationinput");
