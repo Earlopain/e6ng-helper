@@ -73,6 +73,9 @@ const features = {
     "instantSearchFiltering": {
         location: "=/posts",
         description: "Adds a extra search box bellow the current one where you can narrow your search and instantly see the results"
+    },
+    "hide18PlusBanner": {
+        description: "Hides the annoying 18+ banner if you are logged out"
     }
 };
 
@@ -571,4 +574,11 @@ function instantSearchFiltering() {
     const instantSearchText = document.createElement("h1");
     instantSearchText.innerText = "Instant Search";
     searchbox.parentNode.insertBefore(instantSearchText, instantSearch);
+}
+
+function hide18PlusBanner() {
+    const banner = document.querySelector(".guest-warning");
+    if (banner !== null) {
+        banner.classList.add("e6ng-invisible");
+    }
 }
