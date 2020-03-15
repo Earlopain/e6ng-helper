@@ -69,6 +69,10 @@ const features = {
         title: "Dtext Formatting",
         description: "Adds dtext formatting buttons. Select some text to enclose it",
         divFunction: settingsDtextFormatting
+    },
+    "instantSearchFiltering": {
+        location: "=/posts",
+        description: "Adds a extra search box bellow the current one where you can narrow your search and instantly see the results"
     }
 };
 
@@ -537,4 +541,14 @@ function addQuickLinks() {
     function prepareLink(link) {
         return link.replace(/\$userid/g, getUserid());
     }
+}
+
+function instantSearchFiltering() {
+    const searchbox = document.getElementById("search-box");
+    const instantSearch = document.createElement("input");
+    instantSearch.style.marginBottom = "5px";
+    searchbox.parentNode.insertBefore(instantSearch, searchbox.nextSibling);
+    const instantSearchText = document.createElement("h1");
+    instantSearchText.innerText = "Instant Search";
+    searchbox.parentNode.insertBefore(instantSearchText, instantSearch);
 }
