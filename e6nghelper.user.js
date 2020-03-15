@@ -248,7 +248,7 @@ function insertDtextFormatting() {
             buttonElement.appendChild(buttonText);
             buttonElement.style.cssText = buttonStyleTemplate;
             buttonElement.addEventListener("click", () => {
-                const pieces = button.content.split("$promp");
+                const pieces = button.content.split("$prompt");
                 let content = "";
                 for (let i = 0; i < pieces.length - 1; i++) {
                     content += pieces[i] + prompt("Your input please");
