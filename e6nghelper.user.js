@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         E6NG Helper
 // @namespace    http://tampermonkey.net/
-// @version      1.2.1
+// @version      1.2.1.2
 // @description  Remake of the now defunct eSix Extend
 // @author       Earlopain
 // @homepage     https://e621.net/forum_topics/25872
@@ -259,7 +259,7 @@ function insertDtextFormatting() {
             buttonElement.appendChild(buttonText);
             buttonElement.style.cssText = buttonStyleTemplate;
             buttonElement.addEventListener("click", () => {
-                const pieces = button.content.split("$promp");
+                const pieces = button.content.split("$prompt");
                 let content = "";
                 for (let i = 0; i < pieces.length - 1; i++) {
                     content += pieces[i] + prompt("Your input please");
@@ -493,7 +493,7 @@ function addExtraShortcuts() {
     const loggedIn = isLoggedIn();
     const onPostsPage = locationCheck("/posts/");
     document.body.addEventListener("keypress", e => {
-        if (e.target.type === "textarea" || e.target.type === "input") {
+        if (e.target.type === "textarea" || e.target.type === "input" || e.target.type === "text") {
             return;
         }
         if (onPostsPage && loggedIn) {
