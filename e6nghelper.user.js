@@ -71,7 +71,7 @@ const features = {
         divFunction: settingsDtextFormatting
     },
     "instantSearchFiltering": {
-        location: "=/posts",
+        location: "=/posts|/posts?|=/",
         description: "Adds a extra search box bellow the current one where you can narrow your search and instantly see the results"
     },
     "hide18PlusBanner": {
