@@ -1,10 +1,14 @@
 function locationCheck(location) {
     const domain = document.location.protocol + "//" + document.location.host;
-    if (location.startsWith("=")) {
-        return document.location.href === domain + location.substring(1);
-    } else {
-        return document.location.href.startsWith(domain + location);
+    let result = false;
+    for (const constraint of location.split("|")) {
+        if (constraint.startsWith("=")) {
+            result |= document.location.href === domain + constraint.substring(1);
+        } else {
+            result |= document.location.href.startsWith(domain + constraint);
+        }
     }
+    return result ? true : false;
 }
 
 function isLoggedIn() {
