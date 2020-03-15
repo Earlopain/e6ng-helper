@@ -66,7 +66,9 @@ const features = {
         description: "Adds additional shortcuts, currently r to upvote. t for downvote"
     },
     "insertDtextFormatting": {
-        description: "Adds dtext formatting buttons. Select some text to enclose it"
+        title: "Dtext Formatting",
+        description: "Adds dtext formatting buttons. Select some text to enclose it",
+        divFunction: settingsDtextFormatting
     }
 };
 
@@ -78,6 +80,23 @@ const defaultQuickAccess = [
     { title: "D", type: "link", hint: "DNP List", content: "https://e621.net/help/avoid_posting" },
     { title: "S", type: "link", hint: "Edit user settings", content: "https://e621.net/users/$userid/edit" },
     { title: "L", type: "link", hint: "Logout", content: "https://e621.net/session/sign_out" }
+];
+
+const defaultDtextFormatting = [
+    { title: "Bold", element: "strong", content: "[b]$selection[/b]" },
+    { title: "Italics", element: "em", content: "[i]$selection[/i]" },
+    { title: "Strike", element: "s", content: "[s]$selection[/s]" },
+    { title: "Under", element: "u", content: "[u]$selection[/u]" },
+    { title: "Super", element: "sup", content: "[sup]$selection[/sup]" },
+    { title: "Spoiler", element: "span", content: "[spoiler]$selection[/spoiler]" },
+    { title: "Color", element: "span", content: "[color=]$selection[/color]" },
+    { title: "Code", element: "span", content: "`$selection`" },
+    { title: "Heading", element: "span", content: "h2.$selection" },
+    { title: "Quote", element: "span", content: "[quote]$selection[/quote]" },
+    { title: "Section", element: "span", content: "[section=Title]$selection[/section]" },
+    { title: "Tag", element: "span", content: "{{$selection}}" },
+    { title: "Wiki", element: "span", content: "[[$selection]]" },
+    { title: "Link", element: "span", content: "\"$selection\":" }
 ];
 
 (function () {
@@ -201,22 +220,7 @@ function quickAddToBlacklist() {
 
 function insertDtextFormatting() {
     const dtext = document.querySelectorAll(".dtext-previewable");
-    const buttons = [
-        { text: "Bold", element: "strong", insert: "[b]$selection[/b]" },
-        { text: "Italics", element: "em", insert: "[i]$selection[/i]" },
-        { text: "Strike", element: "s", insert: "[s]$selection[/s]" },
-        { text: "Under", element: "u", insert: "[u]$selection[/u]" },
-        { text: "Super", element: "sup", insert: "[sup]$selection[/sup]" },
-        { text: "Spoiler", element: "span", insert: "[spoiler]$selection[/spoiler]" },
-        { text: "Color", element: "span", insert: "[color=]$selection[/color]" },
-        { text: "Code", element: "span", insert: "`$selection`" },
-        { text: "Heading", element: "span", insert: "h2.$selection" },
-        { text: "Quote", element: "span", insert: "[quote]$selection[/quote]" },
-        { text: "Section", element: "span", insert: "[section=Title]$selection[/section]" },
-        { text: "Tag", element: "span", insert: "{{$selection}}" },
-        { text: "Wiki", element: "span", insert: "[[$selection]]" },
-        { text: "Link", element: "span", insert: "\"$selection\":" }
-    ];
+    const buttons = getConfig("dtextformatting", defaultDtextFormatting);
     //Steal the styles from a button. If you append buttons before the textare they
     //somehow behave as if you clicked on send.
     const templateButton = document.createElement("button");
@@ -240,11 +244,11 @@ function insertDtextFormatting() {
             const buttonElement = document.createElement("div");
             buttonElement.classList.add("e6ng-dtext-format-button");
             const buttonText = document.createElement(button.element);
-            buttonText.innerText = button.text;
+            buttonText.innerText = button.title;
             buttonElement.appendChild(buttonText);
             buttonElement.style.cssText = buttonStyleTemplate;
             buttonElement.addEventListener("click", () => {
-                const split = button.insert.split("$selection");
+                const split = button.content.split("$selection");
                 let insertStart = split[0];
                 let insertEnd = split[1];
                 if (textarea.selectionStart || textarea.selectionStart == '0') {

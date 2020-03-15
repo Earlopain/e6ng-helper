@@ -310,6 +310,61 @@ function settingsQuickLinks() {
     }
 }
 
+function settingsDtextFormatting() {
+    const div = document.createElement("div");
+    const explainationDiv = document.createElement("div");
+    explainationDiv.innerHTML = "When you are writing a message you will see some extra buttons you can click to quckly insert dtex formatting";
+    div.appendChild(explainationDiv);
+
+    const container = document.createElement("div");
+    container.classList.add("e6ng-small-padding");
+
+    for (const quickAccess of getConfig("dtextformatting", defaultDtextFormatting)) {
+        container.appendChild(createFormattingElement(quickAccess));
+    }
+    div.appendChild(container)
+
+    new Sortable(container, { animation: 150 });
+
+    return div;
+
+    function createFormattingElement(definition) {
+        const dtextContainer = document.createElement("div");
+        dtextContainer.classList.add("e6ng-small-padding");
+        dtextContainer.classList.add("e6ng-dtext-container");
+        dtextContainer.style.display = "table";
+        console.log(definition);
+        dtextContainer.appendChild(document.createTextNode("Title: "));
+        const titleInput = document.createElement("input");
+        titleInput.classList.add("e6ng-dtext-titleinput");
+        titleInput.value = definition.title;
+        dtextContainer.appendChild(titleInput);
+
+
+        dtextContainer.appendChild(document.createTextNode(" Replacement: "));
+        const contentInput = document.createElement("input");
+        contentInput.classList.add("e6ng-dtext-contentinput");
+        contentInput.value = definition.content;
+        dtextContainer.appendChild(contentInput);
+
+        const elementInput = document.createElement("input");
+        elementInput.classList.add("e6ng-quicklinks-elementinput");
+        elementInput.classList.add("e6ng-invisible");
+        elementInput.value = definition.element;
+        dtextContainer.appendChild(elementInput);
+
+        const buttonRemove = document.createElement("button");
+        buttonRemove.style.marginLeft = "5px";
+        buttonRemove.innerText = "Remove";
+        buttonRemove.addEventListener("click", () => {
+            dtextContainer.remove();
+        });
+        dtextContainer.appendChild(buttonRemove);
+
+        return dtextContainer;
+    }
+}
+
 function openSettingsTab(featureName) {
     document.getElementById("e6ng-settings").classList.remove("e6ng-invisible");
     document.getElementById("e6ng-settings-tab-" + featureName).click();
