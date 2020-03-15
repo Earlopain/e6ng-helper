@@ -185,7 +185,7 @@ function createTinyAliasDiv() {
         allAliasesDiv.appendChild(aliasDiv)
     }
     div.appendChild(allAliasesDiv);
-    new Sortable(allAliasesDiv, { animation: 150 });
+    createSortable(allAliasesDiv);
 
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";
@@ -221,7 +221,7 @@ function settingsQuickLinks() {
     }
     div.appendChild(container);
 
-    new Sortable(container, { animation: 150 });
+    createSortable(container);
 
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";
@@ -324,7 +324,7 @@ function settingsDtextFormatting() {
     }
     div.appendChild(container)
 
-    new Sortable(container, { animation: 150 });
+    createSortable(container);
 
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";

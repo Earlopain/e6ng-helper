@@ -191,3 +191,8 @@ function prepareTagInput(input) {
 function savedNotification() {
     Danbooru.notice("Successfully saved. Reload to see changes");
 }
+
+function createSortable(container) {
+    new Sortable(container, { animation: 150, filter: "input, textarea", preventOnFilter: false });
+
+}
