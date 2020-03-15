@@ -425,6 +425,11 @@ function settingsDtextFormatting() {
     }
 }
 
+function settingsShortcuts() {
+    const div = document.createElement("div");
+    return div;
+}
+
 function openSettingsTab(featureName) {
     document.getElementById("e6ng-settings").classList.remove("e6ng-invisible");
     document.getElementById("e6ng-settings-tab-" + featureName).click();

@@ -63,6 +63,8 @@ const features = {
         description: "Adds the possibility to hide which tags you have blacklisted"
     },
     "addExtraShortcuts": {
+        title: "KeyboardShortcuts",
+        divFunction: settingsShortcuts,
         description: "Adds additional shortcuts, currently r to upvote. t for downvote"
     },
     "insertDtextFormatting": {
@@ -109,6 +111,21 @@ const defaultDtextFormatting = [
     { title: "Wiki", element: "span", content: "[[$selection]]" },
     { title: "Link", element: "span", content: "\"$selection\":" }
 ];
+
+const defaultKeyboardShortcuts = {
+    "upvotepost": {
+        keycode: 114,
+        description: "Upvote Post",
+        location: "/posts/",
+        needsLoggedIn: true
+    },
+    "downvotepost": {
+        keycode: 116,
+        description: "Downvote Post",
+        location: "/posts/",
+        needsLoggedIn: true
+    }
+};
 
 (function () {
     'use strict';
@@ -491,16 +508,34 @@ function modifyBlacklist() {
 
 function addExtraShortcuts() {
     const loggedIn = isLoggedIn();
-    const onPostsPage = locationCheck("/posts/");
+    const shortcuts = getConfig("keyboardshortcuts", defaultKeyboardShortcuts);
     document.body.addEventListener("keypress", e => {
         if (e.target.type === "textarea" || e.target.type === "input" || e.target.type === "text") {
             return;
         }
-        if (onPostsPage && loggedIn) {
-            if (e.keyCode === 114) { //upvote
-                document.querySelector(".post-vote-up-link").click();
-            } else if (e.keyCode === 116) { //downvote
-                document.querySelector(".post-vote-down-link").click();
+        for (const action of Object.keys(shortcuts)) {
+            const shortcutsDefinition = shortcuts[action];
+            if (e.keyCode !== shortcutsDefinition.keycode) {
+                continue;
+            }
+
+            if (shortcutsDefinition.needsLoggedIn === true && loggedIn === false) {
+                return;
+            }
+            if (shortcutsDefinition.location !== undefined && locationCheck(shortcutsDefinition.location) === false) {
+                return;
+            }
+
+            switch (action) {
+                case "upvotepost":
+                    document.querySelector(".post-vote-up-link").click();
+                    break;
+                case "downvotepost":
+                    document.querySelector(".post-vote-down-link").click();
+                    break;
+                default:
+                    Danbooru.error("Unknown keyboard action " + action);
+                    break;
             }
         }
     });
