@@ -1,6 +1,10 @@
 function locationCheck(location) {
     const domain = document.location.protocol + "//" + document.location.host;
-    return document.location.href.startsWith(domain + location);
+    if (location.startsWith("=")) {
+        return document.location.href === domain + location.substring(1);
+    } else {
+        return document.location.href.startsWith(domain + location);
+    }
 }
 
 function isLoggedIn() {
