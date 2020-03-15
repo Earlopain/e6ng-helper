@@ -340,6 +340,12 @@ function settingsDtextFormatting() {
             newQuickLinks.push(quickLink);
         }
         setConfig("dtextformatting", newQuickLinks);
+
+        const perrow = parseInt(document.getElementById("e6ng-dtext-perrow").value);
+        if (!isNaN(perrow) && perrow > 0) {
+            setConfig("dtextbuttonsperrow", perrow);
+        }
+
         savedNotification();
     });
 
@@ -367,6 +373,17 @@ function settingsDtextFormatting() {
 
     div.appendChild(addButton);
     div.appendChild(addSelector);
+
+    div.appendChild(document.createTextNode(" Per row: "));
+
+    const perRowInput = document.createElement("input");
+    perRowInput.type = "number";
+    perRowInput.value = getConfig("dtextbuttonsperrow", 7);
+    perRowInput.id = "e6ng-dtext-perrow";
+    perRowInput.min = 1;
+    perRowInput.classList.add("e6ng-small-margin");
+
+    div.appendChild(perRowInput);
 
 
     return div;

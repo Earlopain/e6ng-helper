@@ -228,7 +228,7 @@ function insertDtextFormatting() {
     document.body.appendChild(templateButton);
     const buttonStyleTemplate = getComputedStyle(templateButton);
     templateButton.remove();
-    const buttonsPerRow = 7;
+    const buttonsPerRow = getConfig("dtextbuttonsperrow", 7);
     for (const preview of dtext) {
         const textarea = preview.querySelector("textarea");
         const buttonDiv = document.createElement("div");
