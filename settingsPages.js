@@ -313,7 +313,7 @@ function settingsQuickLinks() {
 function settingsDtextFormatting() {
     const div = document.createElement("div");
     const explainationDiv = document.createElement("div");
-    explainationDiv.innerHTML = "When you are writing a message you will see some extra buttons you can click to quckly insert dtex formatting<br><strong>$selection</strong> will be replaced with what you are currently selecting and <strong>$alert</strong> will pop up a box where you can put something in yourself";
+    explainationDiv.innerHTML = "When you are writing a message you will see some extra buttons you can click to quckly insert dtex formatting<br><strong>$selection</strong> will be replaced with what you are currently selecting and <strong>$prompt</strong> will pop up a box where you can put something in yourself";
     div.appendChild(explainationDiv);
 
     const container = document.createElement("div");
