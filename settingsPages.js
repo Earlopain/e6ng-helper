@@ -326,6 +326,49 @@ function settingsDtextFormatting() {
 
     new Sortable(container, { animation: 150 });
 
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Save";
+
+    saveButton.addEventListener("click", () => {
+        const newQuickLinks = [];
+        for (const element of document.querySelectorAll(".e6ng-dtext-container")) {
+            const quickLink = {
+                title: element.querySelector(".e6ng-dtext-titleinput").value,
+                element: element.querySelector(".e6ng-dtext-elementinput").value,
+                content: element.querySelector(".e6ng-dtext-contentinput").value
+            }
+            newQuickLinks.push(quickLink);
+        }
+        setConfig("dtextformatting", newQuickLinks);
+        savedNotification();
+    });
+
+    div.appendChild(saveButton);
+
+    const addSelector = document.createElement("select");
+    const addButton = document.createElement("button");
+    addButton.classList.add("e6ng-small-margin");
+    addButton.innerText = "Add entry";
+    addButton.addEventListener("click", () => {
+        container.appendChild(createFormattingElement(JSON.parse(addSelector.value)));
+    });
+
+    const customOption = document.createElement("option");
+    customOption.value = JSON.stringify({ title: "", element: "span", content: "" });
+    customOption.innerText = "Custom";
+    addSelector.appendChild(customOption);
+
+    for (const formatting of defaultDtextFormatting) {
+        const option = document.createElement("option");
+        option.value = JSON.stringify(formatting);
+        option.innerText = formatting.title;
+        addSelector.appendChild(option)
+    }
+
+    div.appendChild(addButton);
+    div.appendChild(addSelector);
+
+
     return div;
 
     function createFormattingElement(definition) {
@@ -348,7 +391,7 @@ function settingsDtextFormatting() {
         dtextContainer.appendChild(contentInput);
 
         const elementInput = document.createElement("input");
-        elementInput.classList.add("e6ng-quicklinks-elementinput");
+        elementInput.classList.add("e6ng-dtext-elementinput");
         elementInput.classList.add("e6ng-invisible");
         elementInput.value = definition.element;
         dtextContainer.appendChild(elementInput);
