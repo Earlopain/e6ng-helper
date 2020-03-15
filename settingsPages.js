@@ -393,8 +393,8 @@ function settingsDtextFormatting() {
         dtextContainer.classList.add("e6ng-small-padding");
         dtextContainer.classList.add("e6ng-dtext-container");
         dtextContainer.style.display = "table";
-        console.log(definition);
         dtextContainer.appendChild(document.createTextNode("Title: "));
+
         const titleInput = document.createElement("input");
         titleInput.classList.add("e6ng-dtext-titleinput");
         titleInput.value = definition.title;
