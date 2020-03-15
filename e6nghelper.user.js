@@ -76,6 +76,10 @@ const features = {
     },
     "hide18PlusBanner": {
         description: "Hides the annoying 18+ banner if you are logged out"
+    },
+    "colorRatingsOnPost": {
+        location: "/posts/",
+        description: "Readds the coloring for the rating on posts"
     }
 };
 
@@ -580,5 +584,25 @@ function hide18PlusBanner() {
     const banner = document.querySelector(".guest-warning");
     if (banner !== null) {
         banner.classList.add("e6ng-invisible");
+    }
+}
+
+function colorRatingsOnPost() {
+    const postInfo = document.querySelector("#post-information ul");
+    for (const info of postInfo.children) {
+        if (!info.innerText.startsWith("Rating:")) {
+            continue;
+        }
+        const newElement = document.createElement("li");
+        const text = document.createTextNode(info.innerText.substring(0, 8));
+        const ratingElement = document.createElement("b")
+        const ratingText = info.innerText.substring(8);
+        ratingElement.innerText = ratingText
+        ratingElement.classList.add("e6ng-rating-" + ratingText.toLowerCase());
+
+        newElement.appendChild(text);
+        newElement.appendChild(ratingElement);
+        info.replaceWith(newElement);
+        break;
     }
 }

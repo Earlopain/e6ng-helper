@@ -159,3 +159,15 @@ div#c-posts div.bottom-notices {
 #has-children-relationship-preview {
     display: grid;
 }
+
+.e6ng-rating-safe {
+    color: #3e9e49;
+}
+
+.e6ng-rating-questionable {
+    color: #ffe666;
+}
+
+.e6ng-rating-explicit {
+    color: #e45f5f;
+}
