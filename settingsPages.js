@@ -442,6 +442,27 @@ function settingsShortcuts() {
 
     createSortable(container);
 
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Save";
+
+    saveButton.addEventListener("click", () => {
+        const newShortcuts = {};
+        for (const element of document.querySelectorAll(".e6ng-shortcut-container")) {
+            const name = element.querySelector(".e6ng-shortcut-nameinput").value;
+            const shortcut = {
+                keycode: element.querySelector(".e6ng-shortcut-keycodeinput").value.charCodeAt(0),
+                description: element.querySelector(".e6ng-shortcut-descriptioninput").value,
+                location: element.querySelector(".e6ng-shortcut-locationinput").value,
+                needsLoggedIn: element.querySelector(".e6ng-shortcut-needsloggedininput").value === "true" ? true : false
+            }
+            newShortcuts[name] = shortcut;
+        }
+        setConfig("keyboardshortcuts", newShortcuts);
+        savedNotification();
+    });
+
+    div.appendChild(saveButton);
+
     const addSelector = document.createElement("select");
     const addButton = document.createElement("button");
     addButton.classList.add("e6ng-small-margin");
