@@ -248,7 +248,13 @@ function insertDtextFormatting() {
             buttonElement.appendChild(buttonText);
             buttonElement.style.cssText = buttonStyleTemplate;
             buttonElement.addEventListener("click", () => {
-                const split = button.content.split("$selection");
+                const pieces = button.content.split("$alert");
+                let content = "";
+                for (let i = 0; i < pieces.length - 1; i++) {
+                    content += pieces[i] + prompt("Your input please");
+                }
+                content += pieces[pieces.length - 1];
+                const split = content.split("$selection");
                 let insertStart = split[0];
                 let insertEnd = split[1];
                 if (textarea.selectionStart || textarea.selectionStart == '0') {
