@@ -19,8 +19,6 @@
 // @require      https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js
 // ==/UserScript==
 
-const NETWORK_ERROR = -1;
-
 (function () {
     'use strict';
 

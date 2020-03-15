@@ -1,3 +1,5 @@
+const NETWORK_ERROR = -1;
+
 function locationCheck(location) {
     const domain = document.location.protocol + "//" + document.location.host;
     let result = false;
