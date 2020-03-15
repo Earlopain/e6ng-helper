@@ -200,3 +200,36 @@ function createSortable(container) {
     new Sortable(container, { animation: 150, filter: "input, textarea", preventOnFilter: false });
 
 }
+
+function tagsMatchesFilter(tagString, filterString) {
+    const seperatedFilters = filterString.split(" ");
+    const allTags = tagString.split(" ");
+    let result = true;
+    for (const filter of seperatedFilters) {
+        const inverse = filter.startsWith("-");
+        const filterNoMinus = inverse ? filter.substring(1) : filter;
+        if (result === false) {
+            break;
+        }
+        if (filterNoMinus.includes("*")) {
+            const regex = escapeTagStringToRegex(filterNoMinus);
+            result = regex.test(tagString);
+        } else {
+            //if there is no wildcard, the filter and tag must match
+            let matchFound = false;
+            for (const tag of allTags) {
+                if (tag === filterNoMinus) {
+                    matchFound = true;
+                    break;
+                }
+            }
+            result = matchFound;
+        }
+        result = result !== inverse;
+    }
+    return result;
+}
+
+function escapeTagStringToRegex(string) {
+    return new RegExp(string.replace(/[-\/\\^$+?.()|[\]{}]/g, "\\$&").replace(/\*/g, "[\\S]\*\?"));
+}

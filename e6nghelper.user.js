@@ -547,6 +547,26 @@ function instantSearchFiltering() {
     const searchbox = document.getElementById("search-box");
     const instantSearch = document.createElement("input");
     instantSearch.style.marginBottom = "5px";
+
+    instantSearch.addEventListener("input", () => {
+        const value = instantSearch.value;
+        const posts = document.querySelectorAll(".post-preview");
+        if (value === "") {
+            for (const post of posts) {
+                post.classList.remove("e6ng-invisible");
+            }
+        } else {
+            for (const post of posts) {
+                const tags = post.getAttribute("data-tags");
+                if (tagsMatchesFilter(tags, value)) {
+                    post.classList.remove("e6ng-invisible");
+                } else {
+                    post.classList.add("e6ng-invisible");
+                }
+            }
+        }
+    });
+
     searchbox.parentNode.insertBefore(instantSearch, searchbox.nextSibling);
     const instantSearchText = document.createElement("h1");
     instantSearchText.innerText = "Instant Search";
