@@ -254,18 +254,15 @@ function insertDtextFormatting() {
                     content += pieces[i] + prompt("Your input please");
                 }
                 content += pieces[pieces.length - 1];
-                const split = content.split("$selection");
-                let insertStart = split[0];
-                let insertEnd = split[1];
                 if (textarea.selectionStart || textarea.selectionStart == '0') {
                     const startPos = textarea.selectionStart;
                     const endPos = textarea.selectionEnd;
                     const selectedText = textarea.value.substring(startPos, endPos);
+                    content = content.replace(/\$selection/g, selectedText);
                     textarea.value = textarea.value.substring(0, startPos)
-                        + insertStart + selectedText + insertEnd
-                        + textarea.value.substring(endPos, textarea.value.length);
+                        + content + textarea.value.substring(endPos, textarea.value.length);
                 } else {
-                    textarea.value += insertStart + insertEnd;
+                    textarea.value = content;
                 }
             });
             buttonDiv.appendChild(buttonElement);
