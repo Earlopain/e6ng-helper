@@ -427,7 +427,77 @@ function settingsDtextFormatting() {
 
 function settingsShortcuts() {
     const div = document.createElement("div");
+
+    const explainationDiv = document.createElement("div");
+    explainationDiv.innerHTML = "Here you can change which shortcuts you want and how they should activate";
+    div.appendChild(explainationDiv);
+
+    const container = document.createElement("div");
+    container.classList.add("e6ng-small-padding");
+    const config = getConfig("keyboardshortcuts", defaultKeyboardShortcuts);
+    for (const name of Object.keys(config)) {
+        container.appendChild(createShortcutElement(name, config[name]));
+    }
+    div.appendChild(container)
+
+    createSortable(container);
+
     return div;
+
+    function createShortcutElement(key, definition) {
+        const shortcutContainer = document.createElement("div");
+        shortcutContainer.classList.add("e6ng-small-padding");
+        shortcutContainer.classList.add("e6ng-shortcut-container");
+        shortcutContainer.style.display = "table";
+        shortcutContainer.appendChild(document.createTextNode("Shortcut: "));
+
+        const keyCodeInput = document.createElement("input");
+        keyCodeInput.classList.add("e6ng-shortcut-keycodeinput");
+        keyCodeInput.value = String.fromCharCode(definition.keycode);
+
+        keyCodeInput.addEventListener("keypress", e => {
+            keyCodeInput.value = String.fromCharCode(e.keyCode);
+            e.preventDefault();
+        });
+
+        shortcutContainer.appendChild(keyCodeInput);
+
+
+        shortcutContainer.appendChild(document.createTextNode(" Description: "));
+        const contentInput = document.createElement("input");
+        contentInput.classList.add("e6ng-shortcut-descriptioninput");
+        contentInput.value = definition.description;
+        contentInput.disabled = true;
+        shortcutContainer.appendChild(contentInput);
+
+        const locationInput = document.createElement("input");
+        locationInput.classList.add("e6ng-shortcut-locationinput");
+        locationInput.classList.add("e6ng-invisible");
+        locationInput.value = definition.location;
+        shortcutContainer.appendChild(locationInput);
+
+        const needsLoggedInInput = document.createElement("input");
+        needsLoggedInInput.classList.add("e6ng-shortcut-needsloggedininput");
+        needsLoggedInInput.classList.add("e6ng-invisible");
+        needsLoggedInInput.value = definition.needsLoggedIn;
+        shortcutContainer.appendChild(needsLoggedInInput);
+
+        const name = document.createElement("input");
+        name.classList.add("e6ng-shortcut-nameinput");
+        name.classList.add("e6ng-invisible");
+        name.value = key;
+        shortcutContainer.appendChild(name);
+
+        const buttonRemove = document.createElement("button");
+        buttonRemove.style.marginLeft = "5px";
+        buttonRemove.innerText = "Remove";
+        buttonRemove.addEventListener("click", () => {
+            shortcutContainer.remove();
+        });
+        shortcutContainer.appendChild(buttonRemove);
+
+        return shortcutContainer;
+    }
 }
 
 function openSettingsTab(featureName) {
