@@ -482,7 +482,7 @@ function addExtraShortcuts() {
     const loggedIn = isLoggedIn();
     const onPostsPage = locationCheck("/posts/");
     document.body.addEventListener("keypress", e => {
-        if (e.target.type === "textarea" || e.target.type === "input") {
+        if (e.target.type === "textarea" || e.target.type === "input" || e.target.type === "text") {
             return;
         }
         if (onPostsPage && loggedIn) {
