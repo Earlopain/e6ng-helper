@@ -239,3 +239,7 @@ function tagsMatchesFilter(tagString, filterString) {
 function escapeTagStringToRegex(string) {
     return new RegExp(string.replace(/[-\/\\^$+?.()|[\]{}]/g, "\\$&").replace(/\*/g, "[\\S]\*\?"));
 }
+
+function getValueOrDefault(value, defaultValue) {
+    return value !== undefined ? value : defaultValue;
+}

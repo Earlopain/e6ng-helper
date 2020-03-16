@@ -90,17 +90,19 @@ const defaultDtextFormatting = [
     { title: "Link", element: "span", content: "\"$selection\":" }
 ];
 
-const defaultKeyboardShortcuts = {
-    "upvotepost": {
+const defaultKeyboardShortcuts = [
+    {
+        action: "upvotepost",
         keycode: 114,
         description: "Upvote Post",
         location: "/posts/",
         needsLoggedIn: true
     },
-    "downvotepost": {
+    {
+        action: "downvotepost",
         keycode: 116,
         description: "Downvote Post",
         location: "/posts/",
         needsLoggedIn: true
     }
-};
+];

@@ -311,6 +311,18 @@ function settingsQuickLinks() {
 }
 
 function settingsDtextFormatting() {
+    const settingsDefinition = {
+        prefix: "dtext",
+        elements: [
+            "Title: ",
+            { name: "title" },
+            " Replacement: ",
+            { name: "content" },
+            { name: "element", classes: ["e6ng-invisible"] }
+        ],
+        deleteButton: true
+    }
+
     const div = document.createElement("div");
     const explainationDiv = document.createElement("div");
     explainationDiv.innerHTML = "When you are writing a message you will see some extra buttons you can click to quckly insert dtex formatting<br><strong>$selection</strong> will be replaced with what you are currently selecting and <strong>$prompt</strong> will pop up a box where you can put something in yourself";
@@ -320,33 +332,17 @@ function settingsDtextFormatting() {
     container.classList.add("e6ng-small-padding");
 
     for (const quickAccess of getConfig("dtextformatting", defaultDtextFormatting)) {
-        container.appendChild(createFormattingElement(quickAccess));
+        container.appendChild(createSettingsElement(settingsDefinition, quickAccess));
     }
     div.appendChild(container)
 
     createSortable(container);
 
-    const saveButton = document.createElement("button");
-    saveButton.innerText = "Save";
-
-    saveButton.addEventListener("click", () => {
-        const newQuickLinks = [];
-        for (const element of document.querySelectorAll(".e6ng-dtext-container")) {
-            const quickLink = {
-                title: element.querySelector(".e6ng-dtext-titleinput").value,
-                element: element.querySelector(".e6ng-dtext-elementinput").value,
-                content: element.querySelector(".e6ng-dtext-contentinput").value
-            }
-            newQuickLinks.push(quickLink);
-        }
-        setConfig("dtextformatting", newQuickLinks);
-
+    const saveButton = createSettingsSaveButton(settingsDefinition, "dtextformatting", () => {
         const perrow = parseInt(document.getElementById("e6ng-dtext-perrow").value);
         if (!isNaN(perrow) && perrow > 0) {
             setConfig("dtextbuttonsperrow", perrow);
         }
-
-        savedNotification();
     });
 
     div.appendChild(saveButton);
@@ -356,7 +352,8 @@ function settingsDtextFormatting() {
     addButton.classList.add("e6ng-small-margin");
     addButton.innerText = "Add entry";
     addButton.addEventListener("click", () => {
-        container.appendChild(createFormattingElement(JSON.parse(addSelector.value)));
+        console.log(JSON.parse(addSelector.value));
+        container.appendChild(createSettingsElement(settingsDefinition, JSON.parse(addSelector.value)));
     });
 
     const customOption = document.createElement("option");
@@ -384,48 +381,29 @@ function settingsDtextFormatting() {
     perRowInput.classList.add("e6ng-small-margin");
 
     div.appendChild(perRowInput);
-
-
     return div;
-
-    function createFormattingElement(definition) {
-        const dtextContainer = document.createElement("div");
-        dtextContainer.classList.add("e6ng-small-padding");
-        dtextContainer.classList.add("e6ng-dtext-container");
-        dtextContainer.style.display = "table";
-        dtextContainer.appendChild(document.createTextNode("Title: "));
-
-        const titleInput = document.createElement("input");
-        titleInput.classList.add("e6ng-dtext-titleinput");
-        titleInput.value = definition.title;
-        dtextContainer.appendChild(titleInput);
-
-
-        dtextContainer.appendChild(document.createTextNode(" Replacement: "));
-        const contentInput = document.createElement("input");
-        contentInput.classList.add("e6ng-dtext-contentinput");
-        contentInput.value = definition.content;
-        dtextContainer.appendChild(contentInput);
-
-        const elementInput = document.createElement("input");
-        elementInput.classList.add("e6ng-dtext-elementinput");
-        elementInput.classList.add("e6ng-invisible");
-        elementInput.value = definition.element;
-        dtextContainer.appendChild(elementInput);
-
-        const buttonRemove = document.createElement("button");
-        buttonRemove.style.marginLeft = "5px";
-        buttonRemove.innerText = "Remove";
-        buttonRemove.addEventListener("click", () => {
-            dtextContainer.remove();
-        });
-        dtextContainer.appendChild(buttonRemove);
-
-        return dtextContainer;
-    }
 }
 
 function settingsShortcuts() {
+    const settingsDefinition = {
+        prefix: "keyboardshortcuts",
+        elements: [
+            "Shortcut: ",
+            {
+                name: "keycode", displayFunction: value => String.fromCharCode(value),
+                saveFunction: value => value.charCodeAt(0), keyPress: e => {
+                    e.target.value = String.fromCharCode(e.keyCode);
+                    e.preventDefault();
+                }
+            },
+            " Description: ",
+            { name: "description" },
+            { name: "location", classes: ["e6ng-invisible"] },
+            { name: "needsLoggedIn", classes: ["e6ng-invisible"] }
+        ],
+        deleteButton: true
+    }
+
     const div = document.createElement("div");
 
     const explainationDiv = document.createElement("div");
@@ -434,33 +412,15 @@ function settingsShortcuts() {
 
     const container = document.createElement("div");
     container.classList.add("e6ng-small-padding");
-    const config = getConfig("keyboardshortcuts", defaultKeyboardShortcuts);
-    for (const name of Object.keys(config)) {
-        container.appendChild(createShortcutElement(name, config[name]));
+    const shortcuts = getConfig("keyboardshortcuts", defaultKeyboardShortcuts);
+    for (const shortcut of shortcuts) {
+        container.appendChild(createSettingsElement(settingsDefinition, shortcut));
     }
     div.appendChild(container)
 
     createSortable(container);
 
-    const saveButton = document.createElement("button");
-    saveButton.innerText = "Save";
-
-    saveButton.addEventListener("click", () => {
-        const newShortcuts = {};
-        for (const element of document.querySelectorAll(".e6ng-shortcut-container")) {
-            const name = element.querySelector(".e6ng-shortcut-nameinput").value;
-            const shortcut = {
-                keycode: element.querySelector(".e6ng-shortcut-keycodeinput").value.charCodeAt(0),
-                description: element.querySelector(".e6ng-shortcut-descriptioninput").value,
-                location: element.querySelector(".e6ng-shortcut-locationinput").value,
-                needsLoggedIn: element.querySelector(".e6ng-shortcut-needsloggedininput").value === "true" ? true : false
-            }
-            newShortcuts[name] = shortcut;
-        }
-        setConfig("keyboardshortcuts", newShortcuts);
-        savedNotification();
-    });
-
+    const saveButton = createSettingsSaveButton(settingsDefinition, "keyboardshortcuts");
     div.appendChild(saveButton);
 
     const addSelector = document.createElement("select");
@@ -468,14 +428,13 @@ function settingsShortcuts() {
     addButton.classList.add("e6ng-small-margin");
     addButton.innerText = "Add entry";
     addButton.addEventListener("click", () => {
-        container.appendChild(createShortcutElement(addSelector.options[addSelector.selectedIndex].getAttribute("data-name"), JSON.parse(addSelector.value)));
+        container.appendChild(createSettingsElement(settingsDefinition, JSON.parse(addSelector.value)));
     });
 
     for (const name of Object.keys(defaultKeyboardShortcuts)) {
         const shortcut = defaultKeyboardShortcuts[name];
         const option = document.createElement("option");
         option.value = JSON.stringify(shortcut);
-        option.setAttribute("data-name", name);
         option.innerText = shortcut.description;
         addSelector.appendChild(option)
     }
@@ -483,63 +442,7 @@ function settingsShortcuts() {
     div.appendChild(addButton);
     div.appendChild(addSelector);
 
-
     return div;
-
-    function createShortcutElement(key, definition) {
-        const shortcutContainer = document.createElement("div");
-        shortcutContainer.classList.add("e6ng-small-padding");
-        shortcutContainer.classList.add("e6ng-shortcut-container");
-        shortcutContainer.style.display = "table";
-        shortcutContainer.appendChild(document.createTextNode("Shortcut: "));
-
-        const keyCodeInput = document.createElement("input");
-        keyCodeInput.classList.add("e6ng-shortcut-keycodeinput");
-        keyCodeInput.value = String.fromCharCode(definition.keycode);
-
-        keyCodeInput.addEventListener("keypress", e => {
-            keyCodeInput.value = String.fromCharCode(e.keyCode);
-            e.preventDefault();
-        });
-
-        shortcutContainer.appendChild(keyCodeInput);
-
-
-        shortcutContainer.appendChild(document.createTextNode(" Description: "));
-        const descriptionInput = document.createElement("input");
-        descriptionInput.classList.add("e6ng-shortcut-descriptioninput");
-        descriptionInput.value = definition.description;
-        descriptionInput.disabled = true;
-        shortcutContainer.appendChild(descriptionInput);
-
-        const locationInput = document.createElement("input");
-        locationInput.classList.add("e6ng-shortcut-locationinput");
-        locationInput.classList.add("e6ng-invisible");
-        locationInput.value = definition.location;
-        shortcutContainer.appendChild(locationInput);
-
-        const needsLoggedInInput = document.createElement("input");
-        needsLoggedInInput.classList.add("e6ng-shortcut-needsloggedininput");
-        needsLoggedInInput.classList.add("e6ng-invisible");
-        needsLoggedInInput.value = definition.needsLoggedIn;
-        shortcutContainer.appendChild(needsLoggedInInput);
-
-        const name = document.createElement("input");
-        name.classList.add("e6ng-shortcut-nameinput");
-        name.classList.add("e6ng-invisible");
-        name.value = key;
-        shortcutContainer.appendChild(name);
-
-        const buttonRemove = document.createElement("button");
-        buttonRemove.style.marginLeft = "5px";
-        buttonRemove.innerText = "Remove";
-        buttonRemove.addEventListener("click", () => {
-            shortcutContainer.remove();
-        });
-        shortcutContainer.appendChild(buttonRemove);
-
-        return shortcutContainer;
-    }
 }
 
 function openSettingsTab(featureName) {
@@ -556,4 +459,71 @@ function createSettingsDiv(featureName) {
     tabDiv.classList.add("e6ng-tab-content");
     tabDiv.id = "e6ng-tab-content-" + featureName;
     return tabDiv;
+}
+
+function createSettingsElement(definition, values) {
+    const container = document.createElement("div");
+    container.classList.add("e6ng-small-padding");
+    container.classList.add("e6ng-" + definition.prefix + "-container");
+    container.style.display = "table";
+    let valueIndex = 0;
+    for (const spec of definition.elements) {
+        if (typeof spec === "string") {
+            container.appendChild(document.createTextNode(spec));
+        } else {
+            const element = document.createElement(getValueOrDefault(spec.tagName, "input"));
+            element.classList.add("e6ng-" + definition.prefix + "-" + spec.name);
+            for (const cssClass of getValueOrDefault(spec.classes, [])) {
+                element.classList.add(cssClass);
+            }
+            element.value = values[spec.name];
+            if (spec.displayFunction) {
+                element.value = spec.displayFunction(element.value);
+            }
+            if (spec.keyPress) {
+                element.addEventListener("keypress", spec.keyPress);
+            }
+            container.appendChild(element);
+            valueIndex++;
+        }
+    }
+    if (definition.deleteButton) {
+        const buttonRemove = document.createElement("button");
+        buttonRemove.style.marginLeft = "5px";
+        buttonRemove.innerText = "Remove";
+        buttonRemove.addEventListener("click", () => {
+            container.remove();
+        });
+        container.appendChild(buttonRemove);
+    }
+    return container;
+}
+
+function createSettingsSaveButton(definition, configName, extra) {
+    const saveButton = document.createElement("button");
+    saveButton.innerText = "Save";
+    saveButton.addEventListener("click", () => {
+        const settings = [];
+        debugger;
+        for (const element of document.querySelectorAll(".e6ng-" + definition.prefix + "-container")) {
+            const entry = {};
+
+            for (const spec of definition.elements) {
+                if (typeof spec === "string") {
+                    continue;
+                }
+                entry[spec.name] = element.querySelector(".e6ng-" + definition.prefix + "-" + spec.name).value;
+                if (spec.saveFunction) {
+                    entry[spec.name] = spec.saveFunction(entry[spec.name]);
+                }
+            }
+            settings.push(entry);
+        }
+        setConfig(configName, settings);
+        if (extra) {
+            extra();
+        }
+        savedNotification();
+    });
+    return saveButton;
 }

@@ -405,20 +405,19 @@ function addExtraShortcuts() {
         if (e.target.type === "textarea" || e.target.type === "input" || e.target.type === "text") {
             return;
         }
-        for (const action of Object.keys(shortcuts)) {
-            const shortcutsDefinition = shortcuts[action];
-            if (e.keyCode !== shortcutsDefinition.keycode) {
+        for (const shortcut of shortcuts) {
+            if (e.keyCode !== shortcut.keycode) {
                 continue;
             }
 
-            if (shortcutsDefinition.needsLoggedIn === true && loggedIn === false) {
+            if (shortcut.needsLoggedIn === true && loggedIn === false) {
                 return;
             }
-            if (shortcutsDefinition.location !== undefined && locationCheck(shortcutsDefinition.location) === false) {
+            if (shortcut.location !== undefined && locationCheck(shortcut.location) === false) {
                 return;
             }
 
-            switch (action) {
+            switch (shortcut.action) {
                 case "upvotepost":
                     document.querySelector(".post-vote-up-link").click();
                     break;
@@ -426,7 +425,7 @@ function addExtraShortcuts() {
                     document.querySelector(".post-vote-down-link").click();
                     break;
                 default:
-                    Danbooru.error("Unknown keyboard action " + action);
+                    Danbooru.error("Unknown keyboard action " + shortcut.action);
                     break;
             }
         }
