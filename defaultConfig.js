@@ -60,6 +60,10 @@ const features = {
     "colorRatingsOnPost": {
         location: "/posts/",
         description: "Readds the coloring for the rating on posts"
+    },
+    "removeQueryStringFromPosts": {
+        location: "/posts/",
+        description: "Removes that anoying extra bit from the url when you go to a post after"
     }
 };
 

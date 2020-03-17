@@ -535,6 +535,10 @@ function colorRatingsOnPost() {
     }
 }
 
+function removeQueryStringFromPosts() {
+    history.replaceState(null, "", location.href.split("?")[0]);
+}
+
 
 function migrateSettings() {
     //backwards compatibility, will be removed eventually
