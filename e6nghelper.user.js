@@ -302,12 +302,14 @@ function enhancePostUploader() {
     }
 
     function insertTinyAlias(inputElement, textarea) {
-        const tinyAliases = getConfig("tinyalias", {});
-        if (tinyAliases[inputElement.value]) {
-            const prefix = textarea.value.endsWith(" ") || textarea.value.length === 0 ? "" : " ";
-            textarea.value += prefix + tinyAliases[inputElement.value];
-            inputElement.value = "";
-            return;
+        const tinyAliases = getConfig("tinyalias", []);
+        for (const alias of tinyAliases) {
+            if (alias.title === inputElement.value) {
+                const prefix = textarea.value.endsWith(" ") || textarea.value.length === 0 ? "" : " ";
+                textarea.value += prefix + alias.content;
+                inputElement.value = "";
+                return;
+            }
         }
     }
 
