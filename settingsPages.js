@@ -142,7 +142,7 @@ function createTinyAliasDiv() {
     const container = document.createElement("div");
     container.style.display = "flow-root";
 
-    for (const alias of getConfig("tinyalias", [])) {
+    for (const alias of getConfig(settingsDefinition.prefix, [])) {
         container.appendChild(createSettingsElement(settingsDefinition, alias));
     }
     div.appendChild(container);
@@ -203,7 +203,7 @@ function settingsQuickLinks() {
 
 function settingsDtextFormatting() {
     const settingsDefinition = {
-        prefix: "dtext",
+        prefix: "dtextformatting",
         elements: [
             "Title: ",
             { name: "title" },
@@ -222,7 +222,7 @@ function settingsDtextFormatting() {
     const container = document.createElement("div");
     container.classList.add("e6ng-small-padding");
 
-    for (const quickAccess of getConfig("dtextformatting", defaultDtextFormatting)) {
+    for (const quickAccess of getConfig(settingsDefinition.prefix, defaultDtextFormatting)) {
         container.appendChild(createSettingsElement(settingsDefinition, quickAccess));
     }
     div.appendChild(container)
@@ -282,7 +282,7 @@ function settingsShortcuts() {
 
     const container = document.createElement("div");
     container.classList.add("e6ng-small-padding");
-    const shortcuts = getConfig("keyboardshortcuts", defaultKeyboardShortcuts);
+    const shortcuts = getConfig(settingsDefinition.prefix, defaultKeyboardShortcuts);
     for (const shortcut of shortcuts) {
         container.appendChild(createSettingsElement(settingsDefinition, shortcut));
     }
