@@ -21,7 +21,7 @@
 
 (function () {
     'use strict';
-
+    migrateSettings();
     const enabledFeatures = getConfig("enabledfeatures", {});
     const loggedIn = isLoggedIn();
     for (const featureFunction of Object.keys(features)) {
@@ -532,5 +532,17 @@ function colorRatingsOnPost() {
         newElement.appendChild(ratingElement);
         info.replaceWith(newElement);
         break;
+    }
+}
+
+
+function migrateSettings() {
+    //backwards compatibility, will be removed eventually
+    if (!Array.isArray(getConfig("tinyalias", []))) {
+        const newSettings = [];
+        for (const key of Object.keys(allAliases)) {
+            newSettings.push({ title: key, content: allAliases[key] });
+        }
+        setConfig("tinyalias", newSettings);
     }
 }

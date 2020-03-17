@@ -125,18 +125,6 @@ function createTinyAliasDiv() {
     explainationDiv.innerText = "When you are uploading a post and insert a tag with the name you typed here, the complete text you entered will be inserted into the tag box";
     div.appendChild(explainationDiv);
 
-    const allAliases = getConfig("tinyalias", []);
-    let convertedAliases = [];
-    //backwards comp, previously the were saved as key => value pair
-    //removed eventually
-    if (!Array.isArray(allAliases)) {
-        for (const key of Object.keys(allAliases)) {
-            convertedAliases.push({ title: key, content: allAliases[key] });
-        }
-    } else {
-        convertedAliases = allAliases;
-    }
-
     const settingsDefinition = {
         prefix: "tinyalias",
         classes: ["e6ng-float-left"],
@@ -154,7 +142,7 @@ function createTinyAliasDiv() {
     const container = document.createElement("div");
     container.style.display = "flow-root";
 
-    for (const alias of convertedAliases) {
+    for (const alias of getConfig("tinyalias", [])) {
         container.appendChild(createSettingsElement(settingsDefinition, alias));
     }
     div.appendChild(container);
