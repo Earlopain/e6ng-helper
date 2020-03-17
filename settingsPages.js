@@ -148,12 +148,7 @@ function createTinyAliasDiv() {
     div.appendChild(container);
     createSortable(container);
 
-    const addButton = document.createElement("button");
-    addButton.classList.add("e6ng-small-margin");
-    addButton.innerText = "Add entry";
-    addButton.addEventListener("click", () => {
-        container.appendChild(createSettingsElement(settingsDefinition, { title: "", content: "" }));
-    });
+    const addButton = createSettingsAddButton(container, settingsDefinition);
 
     const saveButton = createSettingsSaveButton(settingsDefinition);
     div.appendChild(saveButton);
@@ -164,6 +159,7 @@ function createTinyAliasDiv() {
 function settingsQuickLinks() {
     const settingsDefinition = {
         prefix: "quicklinks",
+        displayName: "hint",
         elements: [
             "Title: ",
             { name: "title" },
@@ -195,7 +191,7 @@ function settingsQuickLinks() {
     const saveButton = createSettingsSaveButton(settingsDefinition)
     div.appendChild(saveButton);
 
-    const addElement = createSettingsAddButton(container, settingsDefinition, defaultQuickAccess, "hint", { title: "", type: "link", hint: "Custom", content: "" });
+    const addElement = createSettingsAddButton(container, settingsDefinition, defaultQuickAccess, { title: "", type: "link", hint: "Custom", content: "" });
 
     div.appendChild(addElement);
     return div;
@@ -204,6 +200,7 @@ function settingsQuickLinks() {
 function settingsDtextFormatting() {
     const settingsDefinition = {
         prefix: "dtextformatting",
+        displayName: "title",
         elements: [
             "Title: ",
             { name: "title" },
@@ -238,7 +235,7 @@ function settingsDtextFormatting() {
 
     div.appendChild(saveButton);
 
-    const addElement = createSettingsAddButton(container, settingsDefinition, defaultDtextFormatting, "title", { title: "Custom", element: "span", content: "" });
+    const addElement = createSettingsAddButton(container, settingsDefinition, defaultDtextFormatting, { title: "Custom", element: "span", content: "" });
     div.appendChild(addElement);
 
     div.appendChild(document.createTextNode(" Per row: "));
@@ -257,6 +254,7 @@ function settingsDtextFormatting() {
 function settingsShortcuts() {
     const settingsDefinition = {
         prefix: "keyboardshortcuts",
+        displayName: "title",
         elements: [
             "Shortcut: ",
             {
@@ -293,7 +291,7 @@ function settingsShortcuts() {
     const saveButton = createSettingsSaveButton(settingsDefinition);
     div.appendChild(saveButton);
 
-    const addElement = createSettingsAddButton(container, settingsDefinition, defaultKeyboardShortcuts, "title");
+    const addElement = createSettingsAddButton(container, settingsDefinition, defaultKeyboardShortcuts);
     div.appendChild(addElement);
     return div;
 }
@@ -386,7 +384,7 @@ function createSettingsSaveButton(definition, extra = () => { }) {
     return saveButton;
 }
 
-function createSettingsAddButton(appendToThis, definition, values, titleField, custom = undefined) {
+function createSettingsAddButton(appendToThis, definition, values = [], custom = undefined) {
     const container = document.createElement("div");
     container.classList.add("e6ng-inline");
     const addSelector = document.createElement("select");
@@ -396,23 +394,25 @@ function createSettingsAddButton(appendToThis, definition, values, titleField, c
     addButton.addEventListener("click", () => {
         appendToThis.appendChild(createSettingsElement(definition, JSON.parse(addSelector.value)));
     });
-
-    if (custom !== undefined) {
-        addSelector.appendChild(createOption(custom))
-    }
-
-    for (const value of values) {
-        addSelector.appendChild(createOption(value))
-    }
-
     container.appendChild(addButton);
-    container.appendChild(addSelector);
+    if (values.length !== 0) {
+        if (custom !== undefined) {
+            addSelector.appendChild(createOption(custom))
+        }
+
+        for (const value of values) {
+            addSelector.appendChild(createOption(value))
+        }
+
+        container.appendChild(addSelector);
+    }
+
     return container;
 
     function createOption(value) {
         const option = document.createElement("option");
         option.value = JSON.stringify(value);
-        option.innerText = value[titleField];
+        option.innerText = value[definition.displayName];
         return option
     }
 }
