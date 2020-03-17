@@ -195,28 +195,9 @@ function settingsQuickLinks() {
     const saveButton = createSettingsSaveButton(settingsDefinition)
     div.appendChild(saveButton);
 
-    const addSelector = document.createElement("select");
-    const addButton = document.createElement("button");
-    addButton.classList.add("e6ng-small-margin");
-    addButton.innerText = "Add entry";
-    addButton.addEventListener("click", () => {
-        container.appendChild(createSettingsElement(settingsDefinition.prefix, JSON.parse(addSelector.value)));
-    });
+    const addElement = createSettingsAddButton(container, settingsDefinition, defaultQuickAccess, "hint", { title: "", type: "link", hint: "Custom", content: "" });
 
-    const customOption = document.createElement("option");
-    customOption.value = JSON.stringify({ title: "", type: "link", hint: "", content: "" });
-    customOption.innerText = "Custom";
-    addSelector.appendChild(customOption);
-
-    for (const link of defaultQuickAccess) {
-        const option = document.createElement("option");
-        option.value = JSON.stringify(link);
-        option.innerText = link.hint;
-        addSelector.appendChild(option)
-    }
-
-    div.appendChild(addButton);
-    div.appendChild(addSelector);
+    div.appendChild(addElement);
     return div;
 }
 
@@ -257,29 +238,8 @@ function settingsDtextFormatting() {
 
     div.appendChild(saveButton);
 
-    const addSelector = document.createElement("select");
-    const addButton = document.createElement("button");
-    addButton.classList.add("e6ng-small-margin");
-    addButton.innerText = "Add entry";
-    addButton.addEventListener("click", () => {
-        console.log(JSON.parse(addSelector.value));
-        container.appendChild(createSettingsElement(settingsDefinition, JSON.parse(addSelector.value)));
-    });
-
-    const customOption = document.createElement("option");
-    customOption.value = JSON.stringify({ title: "", element: "span", content: "" });
-    customOption.innerText = "Custom";
-    addSelector.appendChild(customOption);
-
-    for (const formatting of defaultDtextFormatting) {
-        const option = document.createElement("option");
-        option.value = JSON.stringify(formatting);
-        option.innerText = formatting.title;
-        addSelector.appendChild(option)
-    }
-
-    div.appendChild(addButton);
-    div.appendChild(addSelector);
+    const addElement = createSettingsAddButton(container, settingsDefinition, defaultDtextFormatting, "title", { title: "Custom", element: "span", content: "" });
+    div.appendChild(addElement);
 
     div.appendChild(document.createTextNode(" Per row: "));
 
@@ -307,7 +267,7 @@ function settingsShortcuts() {
                 }
             },
             " Description: ",
-            { name: "description" },
+            { name: "title" },
             { name: "location", classes: ["e6ng-invisible"] },
             { name: "needsLoggedIn", classes: ["e6ng-invisible"] }
         ],
@@ -333,25 +293,8 @@ function settingsShortcuts() {
     const saveButton = createSettingsSaveButton(settingsDefinition);
     div.appendChild(saveButton);
 
-    const addSelector = document.createElement("select");
-    const addButton = document.createElement("button");
-    addButton.classList.add("e6ng-small-margin");
-    addButton.innerText = "Add entry";
-    addButton.addEventListener("click", () => {
-        container.appendChild(createSettingsElement(settingsDefinition, JSON.parse(addSelector.value)));
-    });
-
-    for (const name of Object.keys(defaultKeyboardShortcuts)) {
-        const shortcut = defaultKeyboardShortcuts[name];
-        const option = document.createElement("option");
-        option.value = JSON.stringify(shortcut);
-        option.innerText = shortcut.description;
-        addSelector.appendChild(option)
-    }
-
-    div.appendChild(addButton);
-    div.appendChild(addSelector);
-
+    const addElement = createSettingsAddButton(container, settingsDefinition, defaultKeyboardShortcuts, "title");
+    div.appendChild(addElement);
     return div;
 }
 
@@ -441,4 +384,35 @@ function createSettingsSaveButton(definition, extra = () => { }) {
         savedNotification();
     });
     return saveButton;
+}
+
+function createSettingsAddButton(appendToThis, definition, values, titleField, custom = undefined) {
+    const container = document.createElement("div");
+    container.classList.add("e6ng-inline");
+    const addSelector = document.createElement("select");
+    const addButton = document.createElement("button");
+    addButton.classList.add("e6ng-small-margin");
+    addButton.innerText = "Add entry";
+    addButton.addEventListener("click", () => {
+        appendToThis.appendChild(createSettingsElement(definition, JSON.parse(addSelector.value)));
+    });
+
+    if (custom !== undefined) {
+        addSelector.appendChild(createOption(custom))
+    }
+
+    for (const value of values) {
+        addSelector.appendChild(createOption(value))
+    }
+
+    container.appendChild(addButton);
+    container.appendChild(addSelector);
+    return container;
+
+    function createOption(value) {
+        const option = document.createElement("option");
+        option.value = JSON.stringify(value);
+        option.innerText = value[titleField];
+        return option
+    }
 }

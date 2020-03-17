@@ -92,16 +92,16 @@ const defaultDtextFormatting = [
 
 const defaultKeyboardShortcuts = [
     {
+        title: "Upvote Post",
         action: "upvotepost",
         keycode: 114,
-        description: "Upvote Post",
         location: "/posts/",
         needsLoggedIn: true
     },
     {
+        title: "Downvote Post",
         action: "downvotepost",
         keycode: 116,
-        description: "Downvote Post",
         location: "/posts/",
         needsLoggedIn: true
     }
