@@ -150,6 +150,10 @@
     float: right;
 }
 
+.e6ng-float-left {
+    float: left;
+}
+
 /* Modifications to the original theme */
 
 div#c-posts div.bottom-notices {

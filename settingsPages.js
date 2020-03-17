@@ -124,89 +124,70 @@ function createTinyAliasDiv() {
     const explainationDiv = document.createElement("div");
     explainationDiv.innerText = "When you are uploading a post and insert a tag with the name you typed here, the complete text you entered will be inserted into the tag box";
     div.appendChild(explainationDiv);
-    const createAliasDiv = document.createElement("div");
-    createAliasDiv.appendChild(document.createTextNode("Alias name: "));
 
-    const aliasNameInput = document.createElement("input");
-    createAliasDiv.appendChild(aliasNameInput);
-    createAliasDiv.appendChild(document.createTextNode(" Alias content: "));
-
-
-    const aliasValueInput = document.createElement("textarea");
-    aliasValueInput.id = "e6ng-settings-alias-valueinput";
-    aliasValueInput.classList.add("e6ng-small-margin");
-
-    createAliasDiv.appendChild(aliasValueInput);
-
-    const aliasCreateButton = document.createElement("button");
-    aliasCreateButton.innerText = "Create";
-    aliasCreateButton.classList.add("e6ng-small-margin");
-    aliasCreateButton.classList.add("e6ng-small-padding");
-    aliasCreateButton.addEventListener("click", () => {
-        const aliasName = aliasNameInput.value.toLowerCase();
-        const aliasContent = aliasValueInput.value.toLowerCase();
-        if (aliasName === "") {
-            return;
+    const allAliases = getConfig("tinyalias", []);
+    let convertedAliases = [];
+    //backwards comp, previously the were saved as key => value pair
+    //removed eventually
+    if (!Array.isArray(allAliases)) {
+        for (const key of Object.keys(allAliases)) {
+            convertedAliases.push({ title: key, content: allAliases[key] });
         }
-        const currentAliases = getConfig("tinyalias", {});
-        currentAliases[aliasName] = aliasContent;
-        setConfig("tinyalias", currentAliases);
-        Danbooru.notice("Added TinyAlias");
-        redrawSettingsTab("enhancePostUploader");
-    });
-
-    createAliasDiv.appendChild(aliasCreateButton);
-
-    div.appendChild(createAliasDiv);
-
-    const allAliases = getConfig("tinyalias", {});
-    const allAliasesDiv = document.createElement("div");
-    allAliasesDiv.id = "e6ng-settings-all-aliases";
-    for (const aliasName of Object.keys(allAliases)) {
-        const aliasDiv = document.createElement("div");
-        aliasDiv.classList.add("e6ng-settings-alias-container");
-        const nameContainer = document.createElement("div");
-        nameContainer.classList.add("e6ng-settings-alias-name");
-        nameContainer.innerText = aliasName;
-        const deleteAlias = document.createElement("a");
-        deleteAlias.href = "#";
-        deleteAlias.innerText = " (remove)";
-
-        deleteAlias.addEventListener("click", () => {
-            aliasDiv.remove();
-        });
-
-        nameContainer.appendChild(deleteAlias);
-        aliasDiv.appendChild(nameContainer);
-
-        const input = document.createElement("textarea");
-        input.value = allAliases[aliasName];
-        aliasDiv.appendChild(input);
-        allAliasesDiv.appendChild(aliasDiv)
+    } else {
+        convertedAliases = allAliases;
     }
-    div.appendChild(allAliasesDiv);
-    createSortable(allAliasesDiv);
 
-    const saveButton = document.createElement("button");
-    saveButton.innerText = "Save";
-
-    saveButton.addEventListener("click", () => {
-        const aliases = {};
-        for (const alias of allAliasesDiv.children) {
-            const aliasName = alias.querySelector(".e6ng-settings-alias-name").childNodes[0].textContent;
-            const aliasContent = alias.querySelector("textarea").value;
-            aliases[aliasName] = aliasContent;
+    const settingsDefinition = {
+        prefix: "tinyalias",
+        classes: ["e6ng-float-left"],
+        elements: [
+            { name: "title" },
+            { tagName: "br" },
+            { tagName: "br" },
+            { name: "content", tagName: "textarea" },
+            { tagName: "br" }
+        ],
+        deleteButton: {
+            ignoreMargin: true
         }
-        setConfig("tinyalias", aliases);
-        //no need to reload, changes will be picked up
-        Danbooru.notice("TinyAlias saved");
+    }
+    const container = document.createElement("div");
+    container.style.display = "flow-root";
+
+    for (const alias of convertedAliases) {
+        container.appendChild(createSettingsElement(settingsDefinition, alias));
+    }
+    div.appendChild(container);
+    createSortable(container);
+
+    const addButton = document.createElement("button");
+    addButton.classList.add("e6ng-small-margin");
+    addButton.innerText = "Add entry";
+    addButton.addEventListener("click", () => {
+        container.appendChild(createSettingsElement(settingsDefinition, { title: "", content: "" }));
     });
 
+    const saveButton = createSettingsSaveButton(settingsDefinition);
     div.appendChild(saveButton);
+    div.appendChild(addButton);
     return div;
 }
 
 function settingsQuickLinks() {
+    const settingsDefinition = {
+        prefix: "quicklinks",
+        elements: [
+            "Title: ",
+            { name: "title" },
+            " URL: ",
+            { name: "content" },
+            " Hint: ",
+            { name: "hint" },
+            { name: "type", classes: ["e6ng-invisible"] }
+        ],
+        deleteButton: true
+    }
+
     const div = document.createElement("div");
 
     const explainationDiv = document.createElement("div");
@@ -216,31 +197,14 @@ function settingsQuickLinks() {
     const container = document.createElement("div");
     container.classList.add("e6ng-small-padding");
 
-    for (const quickAccess of getConfig("quicklinks", defaultQuickAccess)) {
-        container.appendChild(createQuickLinkElement(quickAccess));
+    for (const quickAccess of getConfig(settingsDefinition.prefix, defaultQuickAccess)) {
+        container.appendChild(createSettingsElement(settingsDefinition, quickAccess));
     }
     div.appendChild(container);
 
     createSortable(container);
 
-    const saveButton = document.createElement("button");
-    saveButton.innerText = "Save";
-
-    saveButton.addEventListener("click", () => {
-        const newQuickLinks = [];
-        for (const element of document.querySelectorAll(".e6ng-quicklinks-container")) {
-            const quickLink = {
-                title: element.querySelector(".e6ng-quicklinks-titleinput").value,
-                type: element.querySelector(".e6ng-quicklinks-typeinput").value,
-                hint: element.querySelector(".e6ng-quicklinks-hintinput").value,
-                content: element.querySelector(".e6ng-quicklinks-contentinput").value
-            }
-            newQuickLinks.push(quickLink);
-        }
-        setConfig("quicklinks", newQuickLinks);
-        savedNotification();
-    });
-
+    const saveButton = createSettingsSaveButton(settingsDefinition)
     div.appendChild(saveButton);
 
     const addSelector = document.createElement("select");
@@ -248,7 +212,7 @@ function settingsQuickLinks() {
     addButton.classList.add("e6ng-small-margin");
     addButton.innerText = "Add entry";
     addButton.addEventListener("click", () => {
-        container.appendChild(createQuickLinkElement(JSON.parse(addSelector.value)));
+        container.appendChild(createSettingsElement(settingsDefinition.prefix, JSON.parse(addSelector.value)));
     });
 
     const customOption = document.createElement("option");
@@ -266,48 +230,6 @@ function settingsQuickLinks() {
     div.appendChild(addButton);
     div.appendChild(addSelector);
     return div;
-
-    function createQuickLinkElement(definition) {
-        const quickAccessContainer = document.createElement("div");
-        quickAccessContainer.classList.add("e6ng-small-padding");
-        quickAccessContainer.classList.add("e6ng-quicklinks-container");
-        quickAccessContainer.style.display = "table";
-
-        quickAccessContainer.appendChild(document.createTextNode("Title: "));
-        const titleInput = document.createElement("input");
-        titleInput.classList.add("e6ng-quicklinks-titleinput");
-        titleInput.value = definition.title;
-        quickAccessContainer.appendChild(titleInput);
-
-
-        quickAccessContainer.appendChild(document.createTextNode(" URL: "));
-        const contentInput = document.createElement("input");
-        contentInput.classList.add("e6ng-quicklinks-contentinput");
-        contentInput.value = definition.content;
-        quickAccessContainer.appendChild(contentInput);
-
-        quickAccessContainer.appendChild(document.createTextNode(" Hint: "));
-        const hintInput = document.createElement("input");
-        hintInput.classList.add("e6ng-quicklinks-hintinput");
-        hintInput.value = definition.hint;
-        quickAccessContainer.appendChild(hintInput);
-
-        const typeInput = document.createElement("input");
-        typeInput.classList.add("e6ng-quicklinks-typeinput");
-        typeInput.classList.add("e6ng-invisible");
-        typeInput.value = definition.type;
-        quickAccessContainer.appendChild(typeInput);
-
-        const buttonRemove = document.createElement("button");
-        buttonRemove.style.marginLeft = "5px";
-        buttonRemove.innerText = "Remove";
-        buttonRemove.addEventListener("click", () => {
-            quickAccessContainer.remove();
-        });
-        quickAccessContainer.appendChild(buttonRemove);
-
-        return quickAccessContainer;
-    }
 }
 
 function settingsDtextFormatting() {
@@ -338,7 +260,7 @@ function settingsDtextFormatting() {
 
     createSortable(container);
 
-    const saveButton = createSettingsSaveButton(settingsDefinition, "dtextformatting", () => {
+    const saveButton = createSettingsSaveButton(settingsDefinition, () => {
         const perrow = parseInt(document.getElementById("e6ng-dtext-perrow").value);
         if (!isNaN(perrow) && perrow > 0) {
             setConfig("dtextbuttonsperrow", perrow);
@@ -420,7 +342,7 @@ function settingsShortcuts() {
 
     createSortable(container);
 
-    const saveButton = createSettingsSaveButton(settingsDefinition, "keyboardshortcuts");
+    const saveButton = createSettingsSaveButton(settingsDefinition);
     div.appendChild(saveButton);
 
     const addSelector = document.createElement("select");
@@ -465,31 +387,39 @@ function createSettingsElement(definition, values) {
     const container = document.createElement("div");
     container.classList.add("e6ng-small-padding");
     container.classList.add("e6ng-" + definition.prefix + "-container");
-    container.style.display = "table";
-    let valueIndex = 0;
+
+    if (definition.classes) {
+        for (const className of definition.classes) {
+            container.classList.add(className);
+        }
+    }
+
     for (const spec of definition.elements) {
         if (typeof spec === "string") {
             container.appendChild(document.createTextNode(spec));
         } else {
             const element = document.createElement(getValueOrDefault(spec.tagName, "input"));
-            element.classList.add("e6ng-" + definition.prefix + "-" + spec.name);
             for (const cssClass of getValueOrDefault(spec.classes, [])) {
                 element.classList.add(cssClass);
             }
-            element.value = values[spec.name];
-            if (spec.displayFunction) {
-                element.value = spec.displayFunction(element.value);
-            }
-            if (spec.keyPress) {
-                element.addEventListener("keypress", spec.keyPress);
+            if (spec.name) {
+                element.classList.add("e6ng-" + definition.prefix + "-" + spec.name);
+                element.value = values[spec.name];
+                if (spec.displayFunction) {
+                    element.value = spec.displayFunction(element.value);
+                }
+                if (spec.keyPress) {
+                    element.addEventListener("keypress", spec.keyPress);
+                }
             }
             container.appendChild(element);
-            valueIndex++;
         }
     }
     if (definition.deleteButton) {
         const buttonRemove = document.createElement("button");
-        buttonRemove.style.marginLeft = "5px";
+        if (definition.deleteButton.ignoreMargin !== true) {
+            buttonRemove.style.marginLeft = "5px";
+        }
         buttonRemove.innerText = "Remove";
         buttonRemove.addEventListener("click", () => {
             container.remove();
@@ -499,17 +429,16 @@ function createSettingsElement(definition, values) {
     return container;
 }
 
-function createSettingsSaveButton(definition, configName, extra) {
+function createSettingsSaveButton(definition, extra = () => { }) {
     const saveButton = document.createElement("button");
     saveButton.innerText = "Save";
     saveButton.addEventListener("click", () => {
         const settings = [];
-        debugger;
         for (const element of document.querySelectorAll(".e6ng-" + definition.prefix + "-container")) {
             const entry = {};
 
             for (const spec of definition.elements) {
-                if (typeof spec === "string") {
+                if (typeof spec === "string" || spec.name === undefined) {
                     continue;
                 }
                 entry[spec.name] = element.querySelector(".e6ng-" + definition.prefix + "-" + spec.name).value;
@@ -519,10 +448,8 @@ function createSettingsSaveButton(definition, configName, extra) {
             }
             settings.push(entry);
         }
-        setConfig(configName, settings);
-        if (extra) {
-            extra();
-        }
+        setConfig(definition.prefix, settings);
+        extra();
         savedNotification();
     });
     return saveButton;
