@@ -1,7 +1,3 @@
-.e6ng-invisible {
-    display: none !important;
-}
-
 #e6ng-settings {
     position: fixed;
     top: 70px;
@@ -64,13 +60,12 @@
     padding-right: 5px;
 }
 
-#e6ng-settings-alias-valueinput {
-    min-width: 250px;
-    display: inline-block;
+.e6ng-tinyalias-title {
+    width: 100%;
 }
 
-#e6ng-settings-all-aliases {
-    display: inline-block;
+.e6ng-tinyalias-content {
+    min-width: 250px;
     width: 100%;
 }
 
@@ -89,27 +84,11 @@
     color: #2e76b4;
 }
 
-.e6ng-settings-alias-container {
-    padding-right: 10px;
-    padding-bottom: 5px;
-    width: 30%;
-    height: 100px;
-    display: flex;
-    flex-direction: column;
-    float: left;
-}
-
-.e6ng-settings-alias-container textarea {
-    width: 100%;
-    height: 100%;
-}
-
 .e6ng-settings-alias-name {
     text-align: center;
 }
 
-
-.e6ng-quicklinks-titleinput {
+.e6ng-quicklinks-title {
     width: 25px;
 }
 
@@ -158,14 +137,8 @@
     float: left;
 }
 
-/* Modifications to the original theme */
-
-div#c-posts div.bottom-notices {
-    display: block;
-}
-
-#has-children-relationship-preview {
-    display: grid;
+.e6ng-invisible {
+    display: none !important;
 }
 
 .e6ng-rating-safe {
@@ -178,4 +151,15 @@ div#c-posts div.bottom-notices {
 
 .e6ng-rating-explicit {
     color: #e45f5f;
+}
+
+
+/* Modifications to the original theme */
+
+div#c-posts div.bottom-notices {
+    display: block;
+}
+
+#has-children-relationship-preview {
+    display: grid;
 }
